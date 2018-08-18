@@ -56,6 +56,8 @@ func (c *socketUseCaseImpl) Send(from TelegramMessage, userId string, text strin
 			fmt.Println("Emit chat-"+userId, from)
 			val.Emit("chat-"+userId, from)
 		}
+	} else {
+		fmt.Println("No socket with userid ", userId)
 	}
 }
 

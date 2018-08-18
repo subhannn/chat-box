@@ -34,7 +34,7 @@ export default class Widget extends Component {
 
         let wrapperStyle;
         if (!isChatOpen && (isMobile || conf.alwaysUseFloatingButton)) {
-            wrapperStyle = { ...mobileClosedWrapperStyle, ...chatOpened}; // closed mobile floating button
+            wrapperStyle = { ...mobileClosedWrapperStyle}; // closed mobile floating button
         } else if (!isMobile){
             wrapperStyle = (conf.closedStyle === 'chat' || isChatOpen || this.wasChatOpened()) ?
                 (isChatOpen) ? 

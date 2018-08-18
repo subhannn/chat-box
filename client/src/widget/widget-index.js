@@ -33,7 +33,7 @@ class ChatObject {
             let root = document.createElement('div');
             root.id = 'chatBoxRoot';
             document.getElementsByTagName('body')[0].appendChild(root);
-            const server = defaultConfiguration.serverUrl || 'https://sheltered-forest-51481.herokuapp.com/';
+            const server = defaultConfiguration.serverUrl || 'http://localhost:9000';
             const iFrameSrc = server + '/chat.html';
             const host = window.location.host || 'unknown-host';
             const conf = { ...defaultConfiguration, ...window.intergramCustomizations };

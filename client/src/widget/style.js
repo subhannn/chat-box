@@ -27,12 +27,13 @@ export const desktopClosedWrapperStyleChat = {
 
 export const mobileClosedWrapperStyle = {
     position: 'fixed',
-    bottom: 0,
+    bottom: '20px',
     right: '32px',
     zIndex: 2147483647,
     boxSizing: 'content-box',
     overflow: 'hidden',
     borderRadius: '5px 5px 0 0',
+    cursor: 'pointer',
 };
 
 export const mobileOpenWrapperStyle = {
