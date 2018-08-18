@@ -8,3 +8,4 @@ client/node_modules/*
 client/package.json
 .env.heroku
 .env.local
+.env
