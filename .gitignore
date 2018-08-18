@@ -4,6 +4,5 @@
 httplog
 *.http
 .vscode
-vendor/*
 client/node_modules/*
 client/package.json
