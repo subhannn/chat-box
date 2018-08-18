@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/jinzhu/gorm"
@@ -24,10 +23,7 @@ const (
 type Config struct{}
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file not found.")
-	}
+	godotenv.Load()
 }
 
 func InitDb() (*gorm.DB, error) {
