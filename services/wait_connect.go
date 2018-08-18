@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -26,11 +27,12 @@ func (g *GoRoutine) run() {
 	for {
 		select {
 		case <-g.done:
-
+			fmt.Println("Wait Done")
 			g.wc.Remove(g.userId)
 			g.ticker.Stop()
 			return
 		case <-g.cancel:
+			fmt.Println("Wait Cancel")
 			g.ticker.Stop()
 			return
 		}
@@ -79,6 +81,7 @@ func (wc *WaitConnectImpl) Register(userId string, email string) {
 func (wc *WaitConnectImpl) Run(userId string) {
 	gor, ok := wc.UsersId[userId]
 	if ok {
+		fmt.Println("Run waiting")
 		go gor.run()
 	}
 }
