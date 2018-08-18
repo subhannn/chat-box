@@ -6,5 +6,5 @@ httplog
 .vscode
 client/node_modules/*
 client/package.json
-.env
 .env.heroku
+.env.local
