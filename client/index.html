@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <script>
+            window.chatAsyncInit = function() {
+                Chat.init({
+                    channelId: '-293943712'
+                    // channelId: '-104122024'
+                });
+            };
+          
+            (function(d, s, id){
+               var js, fjs = d.getElementsByTagName(s)[0];
+               if (d.getElementById(id)) {return;}
+               js = d.createElement(s); js.id = id;
+               js.src = "dist/js/widget.js";
+               fjs.parentNode.insertBefore(js, fjs);
+             }(document, 'script', 'chat-jssdk'));
+        </script>
+    </body>
+</html>

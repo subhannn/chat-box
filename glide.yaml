@@ -1,0 +1,12 @@
+package: telegram.chatbox
+import:
+- package: gopkg.in/tucnak/telebot.v2
+  version: v2.0
+- package: github.com/labstack/echo
+  version: ~3.1
+- package: github.com/joho/godotenv
+- package: github.com/lib/pq
+- package: github.com/googollee/go-socket.io
+- package: github.com/googollee/go-engine.io
+- package: github.com/jinzhu/gorm
+  version: v1.9.1

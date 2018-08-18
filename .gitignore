@@ -1,0 +1,8 @@
+.DS_Store
+*.swp
+.idea
+httplog
+*.http
+.vscode
+vendor/*
+client/node_modules/*
