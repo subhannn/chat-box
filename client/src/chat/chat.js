@@ -38,6 +38,12 @@ export default class Chat extends Component {
 
         this.socket.on("connect", this.onConnect)
         this.socket.on("disconnect", this.onDisconnect)
+        this.socket.on("error", this.onError)
+        this.socket.on("connect_error", this.onError)
+        this.socket.on("reconnecting", function(att){
+            console.log("reconnection")
+            console.log(att)
+        })
         console.log("Bind Chat chat-"+this.props.userId)
         this.socket.on("chat-"+this.props.userId, this.incomingMessage)
 
@@ -133,6 +139,11 @@ export default class Chat extends Component {
         this.cont.style.cssText = 'height:'+e.target.scrollHeight+'px'
     }
 
+    onError = (error) => {
+        console.log('error')
+        console.log(error)
+    }
+
     handleKeyPress = (e) => {
         if (e.keyCode == 13 && this.input.value) {
             e.preventDefault()
@@ -153,7 +164,9 @@ export default class Chat extends Component {
                 from: 'visitor',
                 type: 'chat'
             }
-            this.socket.emit("chat", data)
+            this.socket.emit("chat", data, (data) => {
+                console.log(data)
+            })
             this.input.value = '';
             // this.writeMessage(this.props.name, data.text, data.from)
         }
