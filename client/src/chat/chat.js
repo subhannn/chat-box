@@ -95,7 +95,7 @@ export default class Chat extends Component {
 
     onConnect = () => {
         console.log("connect")
-        console.log(this.props)
+        console.log(this.queue.contents)
         this.socket.emit("register", {
             userId: this.props.userId,
             chatId: this.props.chatId,
@@ -239,16 +239,17 @@ export default class Chat extends Component {
     sendChat = (data) => {
         var $this = this
         this.queue.add(function(){
+            var q = this
             var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, true)
             setTimeout(function(){
                 $this.autoScrollToBot()
+                q.next()
             }, 200)
             $this.socket.emit("chat", data, (data) => {
                 if (typeof data != 'undefined' && typeof data != 'null'){
                     $this.messageComplete(index, data.id)
                 }
             })
-            this.next()
         })
     }
 
