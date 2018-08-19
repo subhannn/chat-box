@@ -1,5 +1,6 @@
 import dateFormat from 'dateformat'
 import { h, Component } from 'preact';
+import MsgLoading from './msg-loading';
 
 const dayInMillis = 60 * 60 * 24 * 1000;
 
@@ -17,14 +18,20 @@ export default class MessageArea extends Component {
         const currentTime = new Date();
         return (
             <ol class="chat">
-                {props.messages.map(({name, text, from, time, type}) => {
+                {props.messages.map(({id, name, text, from, time, type, loading}) => {
                     if (from === 'visitor') {
                         name = "You";
                     }
                     if (type == 'chat') {
                     return (
-                        <li class={from}>
+                        <li class={from} data-id={id}>
                             <div class="msg">
+                                {
+                                    (loading==true)?
+                                    <MsgLoading />
+                                    :
+                                    ''
+                                }
                                 <div class="name">{name}</div>
                                 { (from == 'admin')?
                                 <figure class="avatar">

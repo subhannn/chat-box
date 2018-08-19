@@ -72,7 +72,7 @@ func (u *serverQueryImpl) GetAlias(id int) (*model.AdminAlias, error) {
 	return &alias, nil
 }
 
-func (u *serverQueryImpl) SaveChat(chat model.Chat) error {
+func (u *serverQueryImpl) SaveChat(chat *model.Chat) error {
 	err := u.db.Table("chats").Create(&chat).Error
 	if err != nil {
 		return err
@@ -86,12 +86,12 @@ func (u *serverQueryImpl) GetMessages(roomId string, limit int64, offset float64
 		select extract(epoch from chats."createdAt" at time zone 'utc' at time zone 'utc') as "timestamp", case when aa."alias" is null then aa."name"
 		else aa."alias"
 		end as "name", 
-		chats."text", chats."from", chats."type", chats."createdAt" as "time", null as "email" from chats
+		chats."text", chats."from", chats."type", chats."createdAt" as "time", null as "email", chats.id from chats
 		join admin_aliases as aa on aa.id = chats."adminId"
 		where chats."from" = 'admin' and chats."roomId" = ?
 		union
 		select extract(epoch from chats."createdAt" at time zone 'utc' at time zone 'utc') as "timestamp", us."name", chats."text", chats."from", chats."type", 
-		chats."createdAt" as "time", us.email from chats
+		chats."createdAt" as "time", us.email, chats.id from chats
 		join users as us on us.id = chats."userId"
 		where chats."from" = 'visitor' and chats."roomId" = ?
 	) as msg

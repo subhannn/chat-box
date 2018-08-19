@@ -3,6 +3,8 @@ import { h, Component } from 'preact';
 import MessageArea from './message-area';
 import GoBot from './go-bot';
 import * as $ from 'jquery'
+var Queue=require('js-queue');
+var queue=new Queue;
 
 export default class Chat extends Component {
 
@@ -10,9 +12,11 @@ export default class Chat extends Component {
     autoResponseTimer = 0;
     socket = null;
 
+
     constructor(props) {
         super(props);
         
+        this.queue = queue
         this.state.showGoBot = false
         this.state.unread = 0
         if (store.enabled) {
@@ -164,9 +168,7 @@ export default class Chat extends Component {
                 from: 'visitor',
                 type: 'chat'
             }
-            this.socket.emit("chat", data, (data) => {
-                console.log(data)
-            })
+            this.sendChat(data)
             this.input.value = '';
             // this.writeMessage(this.props.name, data.text, data.from)
         }
@@ -215,9 +217,9 @@ export default class Chat extends Component {
 
     getTollerant = () => {
         var tolleran = Math.floor(this.contEle.scrollHeight * 40 / 100)
-        if (this.contEle.scrollHeight < 500) {
-            tolleran = 0
-        }
+        // if (this.contEle.scrollHeight < 500) {
+        //     tolleran = 0
+        // }
 
         return tolleran
     }
@@ -234,19 +236,55 @@ export default class Chat extends Component {
         }
     }
 
-    writeMessage = (name, message, from, type) => {
+    sendChat = (data) => {
+        var $this = this
+        this.queue.add(function(){
+            var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, true)
+            setTimeout(function(){
+                $this.autoScrollToBot()
+            }, 200)
+            $this.socket.emit("chat", data, (data) => {
+                if (typeof data != 'undefined' && typeof data != 'null'){
+                    $this.messageComplete(index, data.id)
+                }
+            })
+            this.next()
+        })
+    }
+
+    writeMessage = (id, name, message, from, type, loading) => {
         var msg = {
+            id: id,
             text: message,
             name: name,
             time: new Date(),
             userId: this.props.userId,
             chatId: this.props.chatId,
             from: from,
-            type: type
+            type: type,
+            loading: (loading==true)
         }
+        var len = this.state.messages.length
+        var newMsg = this.state.messages.push(msg)
         this.setState({
-            message: this.state.messages.push(msg)
+            message: newMsg
         });
+
+        return len
+    }
+
+    messageComplete = (index, newId) => {
+        if (typeof this.state.messages[index] != 'undefined'){
+            console.log('update')
+            this.state.messages[index]['id'] = newId
+            this.state.messages[index]['loading'] = false
+
+            this.setState({
+                message: this.state.messages
+            });
+        }else{
+            console.log('tidak ada')
+        }
     }
 
     userActive = () => {

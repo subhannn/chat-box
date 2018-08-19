@@ -78,7 +78,7 @@ func (s *telegramUseCaseImpl) OnNewMessage(m *tb.Message) {
 				Type:    "chat",
 			}
 
-			err = s.query.SaveChat(*chat)
+			err = s.query.SaveChat(chat)
 			fmt.Println("err", err)
 			if err == nil {
 				s.channel <- &TelegramMessage{

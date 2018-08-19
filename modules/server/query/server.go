@@ -9,6 +9,6 @@ type Server interface {
 	DeleteAlias(id int) error
 	GetAlias(id int) (*model.AdminAlias, error)
 
-	SaveChat(chat model.Chat) error
+	SaveChat(chat *model.Chat) error
 	GetMessages(roomId string, limit int64, offset float64) (interface{}, error)
 }

@@ -62,7 +62,7 @@ func (c *socketUseCaseImpl) Send(from TelegramMessage, userId string, text strin
 }
 
 func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
-	so.On("chat", func(msg SocketMessage) {
+	so.On("chat", func(msg SocketMessage) *SocketMessage {
 		session := c.socketSession.Get(msg.UserId)
 		if session != nil {
 			user := session.User().(*model.User)
@@ -73,16 +73,20 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 				From:   "visitor",
 				Type:   "chat",
 			}
-			err := c.query.SaveChat(*chat)
+			err := c.query.SaveChat(chat)
 			if err == nil {
-				conn := session.Connection()
-				for _, val := range conn {
-					val.Emit("chat-"+msg.UserId, msg)
-				}
+				// conn := session.Connection()
+				// for _, val := range conn {
+				// 	val.Emit("chat-"+msg.UserId, msg)
+				// }
+				msg.ID = &chat.ID
 
 				c.channel <- &msg
+				return &msg
 			}
 		}
+
+		return nil
 	})
 	so.On("register", func(msg SocketMessage) {
 		fmt.Println("Register UserId ", msg.UserId, " With ConnectionID ", so.Id())

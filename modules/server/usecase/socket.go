@@ -6,12 +6,13 @@ type Socket interface {
 }
 
 type SocketMessage struct {
-	Text    string `json:"text"`
-	ChatId  string `json:"chatId"`
-	UserId  string `json:"userId"`
-	Name    string `json:"name"`
-	Email   string `json:"email"`
-	From    string `json:"from"`
-	Type    string `json:"type"`
-	Command string `json:"command"`
+	ID      *uint64 `json:"id"`
+	Text    string  `json:"text"`
+	ChatId  string  `json:"chatId"`
+	UserId  string  `json:"userId"`
+	Name    string  `json:"name"`
+	Email   string  `json:"email"`
+	From    string  `json:"from"`
+	Type    string  `json:"type"`
+	Command string  `json:"command"`
 }

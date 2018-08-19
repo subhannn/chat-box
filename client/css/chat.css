@@ -355,3 +355,13 @@ a.banner {
     font-weight: bold;
     border-radius: 12px;
 }
+
+.visitor span.msg-loading {
+    position: absolute;
+    left: -17px;
+    top: -11px;
+    background-color: rgb(177, 177, 177);
+    display: flex;
+    border-radius: 50%;
+    padding: 2px;
+}
