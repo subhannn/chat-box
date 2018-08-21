@@ -7,7 +7,7 @@ import 'storage-based-queue/dist/queue'
 var md5 = require('md5')
 
 class MessageWorker{
-    retry = 3;
+    retry = -1;
     timeout = 1000;
 
     handle (args) {
@@ -73,6 +73,8 @@ export default class Chat extends Component {
             var c = this.input.clientHeight + this.banner.clientHeight
             this.contEle.style.cssText = 'bottom: '+c+'px';
         }
+
+        this.loadMessages()
     }
 
     loadMessages = (before) => {
@@ -112,7 +114,6 @@ export default class Chat extends Component {
     onConnect = () => {
         console.log("connect")
         var $this = this
-        this.loadMessages()
 
         this.socket.emit("register", {
             userId: this.props.userId,
