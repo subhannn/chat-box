@@ -60,6 +60,7 @@ html, body {
     border-bottom-right-radius: 0;
     background-color: rgb(177, 177, 177);
     color: #060404;
+    margin-right: 35px;
 }
 
 .admin .msg {
@@ -67,6 +68,7 @@ html, body {
     -webkit-order: 1;
         -ms-flex-order: 1;
             order: 1;
+    margin-left: 35px;
 }
 
 .msg {
@@ -78,7 +80,6 @@ html, body {
     margin: 8px 0;
     font-size: 12px;
     line-height: 1.4;
-    margin-left: 35px;
     position: relative;
     color: #4e4e4e;
     font-weight: normal;
@@ -108,11 +109,18 @@ html, body {
     border-right: 7px solid transparent;
 }
 
+.visitor .avatar {
+    right: -35px;
+}
+
+.admin .avatar {
+    left: -35px;
+}
+
 .msg .avatar{
     position: absolute;
     z-index: 1;
     bottom: -15px;
-    left: -35px;
     border-radius: 30px;
     width: 30px;
     height: 30px;

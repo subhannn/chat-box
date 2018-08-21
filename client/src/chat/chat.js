@@ -4,6 +4,7 @@ import MessageArea from './message-area';
 import GoBot from './go-bot';
 import * as $ from 'jquery'
 import 'storage-based-queue/dist/queue'
+var md5 = require('md5')
 
 class MessageWorker{
     retry = 3;
@@ -110,13 +111,18 @@ export default class Chat extends Component {
 
     onConnect = () => {
         console.log("connect")
+        var $this = this
         this.loadMessages()
-        
+
         this.socket.emit("register", {
             userId: this.props.userId,
             chatId: this.props.chatId,
             name: this.props.name,
             email: this.props.email
+        }, function(data){
+            $this.setState({
+                userPhoto: data.photo
+            })
         })
     }
 
@@ -190,12 +196,11 @@ export default class Chat extends Component {
     }
 
     incomingMessage = (msg) => {
-        console.log(msg)
         var name = msg.name
         if (msg.alias != "") {
             name = msg.alias
         }
-        this.writeMessage(msg.id, name, msg.text, msg.from, msg.type, false)
+        this.writeMessage(msg.id, name, msg.text, msg.from, msg.type, false, msg.photo)
         if (msg.type == 'notification') {
             if (msg.command == "endsession") {
                 if (store.enabled) {
@@ -254,7 +259,7 @@ export default class Chat extends Component {
 
     sendChat = (data) => {
         var $this = this
-        var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, true)
+        var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, true, this.state.userPhoto)
         setTimeout(function(){
             $this.autoScrollToBot()
         }, 100)
@@ -271,7 +276,7 @@ export default class Chat extends Component {
         })
     }
 
-    writeMessage = (id, name, message, from, type, loading) => {
+    writeMessage = (id, name, message, from, type, loading, photo) => {
         var msg = {
             id: id,
             text: message,
@@ -279,6 +284,7 @@ export default class Chat extends Component {
             time: new Date(),
             userId: this.props.userId,
             chatId: this.props.chatId,
+            photo: photo,
             from: from,
             type: type,
             loading: (loading==true)

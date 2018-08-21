@@ -53,6 +53,9 @@ func (c *socketUseCaseImpl) Send(from TelegramMessage, userId string, text strin
 	if session != nil {
 		conn := session.Connection()
 		for _, val := range conn {
+			// user := session.User().(model.User)
+			// from.Photo = helper.GetGravatarUrl(user.Email)
+
 			fmt.Println("Emit chat-"+userId, from)
 			val.Emit("chat-"+userId, from)
 		}
@@ -80,6 +83,7 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 				// 	val.Emit("chat-"+msg.UserId, msg)
 				// }
 				msg.ID = &chat.ID
+				msg.Photo = helper.GetGravatarUrl(user.Email)
 
 				c.channel <- &msg
 				return &msg
@@ -88,7 +92,14 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 
 		return nil
 	})
-	so.On("register", func(msg SocketMessage) {
+
+	type ms struct {
+		ID    uint64 `json:"id"`
+		Nama  string `json:"name"`
+		Email string `json:"email"`
+		Photo string `json:"photo"`
+	}
+	so.On("register", func(msg SocketMessage) *ms {
 		fmt.Println("Register UserId ", msg.UserId, " With ConnectionID ", so.Id())
 		user := &model.User{
 			ClientId:    msg.UserId,
@@ -103,6 +114,15 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 		Connection[so.Id()] = msg.UserId
 		c.socketSession.Set(msg.UserId, user, so)
 		c.serviceWait.Register(msg.UserId, msg.Email)
+
+		t := &ms{
+			ID:    user.ID,
+			Nama:  user.Name,
+			Email: user.Email,
+			Photo: helper.GetGravatarUrl(user.Email),
+		}
+
+		return t
 	})
 }
 

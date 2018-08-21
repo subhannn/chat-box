@@ -92,7 +92,11 @@ func (s *telegramUseCaseImpl) OnNewMessage(m *tb.Message) {
 					Type:   "chat",
 				}
 			}
+		} else {
+			fmt.Println("Message not deliver, not match")
 		}
+	} else {
+		fmt.Println("Message not deliver, not reply")
 	}
 }
 func (s *telegramUseCaseImpl) OnCommandStart(m *tb.Message) {

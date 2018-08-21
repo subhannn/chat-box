@@ -15,4 +15,5 @@ type SocketMessage struct {
 	From    string  `json:"from"`
 	Type    string  `json:"type"`
 	Command string  `json:"command"`
+	Photo   string  `json:"photo"`
 }

@@ -18,7 +18,7 @@ export default class MessageArea extends Component {
         const currentTime = new Date();
         return (
             <ol class="chat">
-                {props.messages.map(({id, name, text, from, time, type, loading}) => {
+                {props.messages.map(({id, name, text, from, time, type, photo, loading}) => {
                     if (from === 'visitor') {
                         name = "You";
                     }
@@ -33,13 +33,14 @@ export default class MessageArea extends Component {
                                     ''
                                 }
                                 <div class="name">{name}</div>
-                                { (from == 'admin')?
                                 <figure class="avatar">
-                                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
+                                    {
+                                        (photo != null && photo != "")?
+                                        <img src={photo+"?s=50"} />
+                                        :
+                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
+                                    }
                                 </figure>
-                                :
-                                ''
-                                }
                                 { text }
                                 { (props.conf.displayMessageTime) ?
                                     <div class="time">

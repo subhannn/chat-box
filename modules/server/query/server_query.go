@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"telegram.chatbox/helper"
 	"telegram.chatbox/modules/server/model"
 )
 
@@ -104,9 +105,11 @@ func (u *serverQueryImpl) GetMessages(roomId string, limit int64, offset float64
 		Name      string    `json:"name"`
 		Text      string    `json:"text"`
 		From      string    `json:"from"`
+		Email     string    `json:"email"`
 		Type      string    `json:"type"`
 		Timestamp float64   `json:"timestamp"`
 		Time      time.Time `json:"time"`
+		Photo     *string   `json:"photo"`
 	}{}
 	exe := u.db
 	if offset != 0 {
@@ -125,6 +128,14 @@ func (u *serverQueryImpl) GetMessages(roomId string, limit int64, offset float64
 	if len(chat) > 0 {
 		bf = chat[len(chat)-1].Timestamp
 	}
+
+	for index, val := range chat {
+		if val.Email != "" {
+			photo := helper.GetGravatarUrl(val.Email)
+			chat[index].Photo = &photo
+		}
+	}
+
 	response := struct {
 		Data       interface{}            `json:"data"`
 		Pagination map[string]interface{} `json:"pagination"`
