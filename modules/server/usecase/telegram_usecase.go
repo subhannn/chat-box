@@ -82,6 +82,7 @@ func (s *telegramUseCaseImpl) OnNewMessage(m *tb.Message) {
 			fmt.Println("err", err)
 			if err == nil {
 				s.channel <- &TelegramMessage{
+					ID:     &chat.ID,
 					Text:   m.Text,
 					UserId: match[1],
 					Alias:  admin.Alias,

@@ -6,14 +6,15 @@ type Telegram interface {
 }
 
 type TelegramMessage struct {
-	Text    string `json:"text"`
-	Name    string `json:"name"`
-	Alias   string `json:"alias"`
-	Time    string `json:"time"`
-	UserId  string `json:"userId"`
-	From    string `json:"from"`
-	Type    string `json:"type"`
-	Command string `json:"command"`
+	ID      *uint64 `json:"id"`
+	Text    string  `json:"text"`
+	Name    string  `json:"name"`
+	Alias   string  `json:"alias"`
+	Time    string  `json:"time"`
+	UserId  string  `json:"userId"`
+	From    string  `json:"from"`
+	Type    string  `json:"type"`
+	Command string  `json:"command"`
 }
 
 type TelegramSender struct {

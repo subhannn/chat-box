@@ -3,20 +3,37 @@ import { h, Component } from 'preact';
 import MessageArea from './message-area';
 import GoBot from './go-bot';
 import * as $ from 'jquery'
-var Queue=require('js-queue');
-var queue=new Queue;
+import 'storage-based-queue/dist/queue'
+
+class MessageWorker{
+    retry = 3;
+    timeout = 1000;
+
+    handle (args) {
+        try {
+            return new Promise((resolve, reject) => {
+                args.callback(resolve, reject)
+            });
+        } catch (e) {
+            console.log(e)
+        }
+    }
+}
+
+Queue.workers({ MessageWorker });
+
+const queue = new Queue();
+const channelA = queue.create("send-message");
 
 export default class Chat extends Component {
-
     autoResponseState = 'pristine'; // pristine, set or canceled
     autoResponseTimer = 0;
     socket = null;
 
-
     constructor(props) {
         super(props);
         
-        this.queue = queue
+        channelA.start()
         this.state.showGoBot = false
         this.state.unread = 0
         if (store.enabled) {
@@ -95,14 +112,12 @@ export default class Chat extends Component {
 
     onConnect = () => {
         console.log("connect")
-        console.log(this.queue.contents)
         this.socket.emit("register", {
             userId: this.props.userId,
             chatId: this.props.chatId,
             name: this.props.name,
             email: this.props.email
         })
-        // this.writeMessage('Admin Bot', this.props.conf.introMessage, 'admin')
     }
 
     onDisconnect = () => {
@@ -153,7 +168,7 @@ export default class Chat extends Component {
             e.preventDefault()
 
             if (!this.userActive()) {
-                this.writeMessage("Admin", "Your chat has ended, your message not send.", "admin", "notification")
+                this.writeMessage(0, "Admin", "Your chat has ended, your message not send.", "admin", "notification", false)
                 this.input.value = '';
                 return
             }
@@ -172,14 +187,15 @@ export default class Chat extends Component {
             this.input.value = '';
             // this.writeMessage(this.props.name, data.text, data.from)
         }
-    };
+    }
 
     incomingMessage = (msg) => {
+        console.log(msg)
         var name = msg.name
         if (msg.alias != "") {
             name = msg.alias
         }
-        this.writeMessage(name, msg.text, msg.from, msg.type)
+        this.writeMessage(msg.id, name, msg.text, msg.from, msg.type, false)
         if (msg.type == 'notification') {
             if (msg.command == "endsession") {
                 if (store.enabled) {
@@ -238,18 +254,20 @@ export default class Chat extends Component {
 
     sendChat = (data) => {
         var $this = this
-        this.queue.add(function(){
-            var q = this
-            var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, true)
-            setTimeout(function(){
-                $this.autoScrollToBot()
-                q.next()
-            }, 200)
-            $this.socket.emit("chat", data, (data) => {
-                if (typeof data != 'undefined' && typeof data != 'null'){
-                    $this.messageComplete(index, data.id)
-                }
-            })
+        var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, true)
+        setTimeout(function(){
+            $this.autoScrollToBot()
+        }, 100)
+        channelA.add({
+            handler: "MessageWorker",
+            args: { callback: function(resolve, reject){
+                $this.socket.emit("chat", data, (data) => {
+                    if (typeof data != 'undefined' && typeof data != 'null'){
+                        $this.messageComplete(index, data.id)
+                        resolve(true)
+                    }
+                })
+            } },
         })
     }
 

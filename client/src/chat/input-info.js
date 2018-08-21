@@ -4,12 +4,6 @@ import linkState from 'linkstate';
 import Chat from './chat';
 
 export default class InputInfo extends Component {
-    state = {
-        name: '',
-        email: '',
-        readyConnect: false
-    };
-
     constructor(props) {
         super(props);
 

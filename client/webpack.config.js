@@ -18,7 +18,7 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.js$/, loaders: ['babel'], include: path.join(__dirname, 'src') },
+            { test: /\.js$/, loaders: ['babel-loader'], include: path.join(__dirname, 'src'), exclude: /node_modules/ },
             { test: /\.css$/, loader: 'style!css!sass', include: path.join(__dirname, 'css') },
         ]
     },
