@@ -6,7 +6,7 @@ type Server interface {
 	ClientCreateOrUpdate(user *model.User) error
 	AdminCreateOrUpdate(user *model.AdminAlias) error
 	SaveAlias(admin model.AdminAlias) error
-	DeleteAlias(id int) error
+	DeleteAlias(id uint64) error
 	GetAlias(id int) (*model.AdminAlias, error)
 
 	SaveChat(chat *model.Chat) error

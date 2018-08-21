@@ -63,9 +63,8 @@ func (s *telegramUseCaseImpl) OnNewMessage(m *tb.Message) {
 				Name:     m.Sender.FirstName + ` ` + m.Sender.LastName,
 			}
 			err := s.query.AdminCreateOrUpdate(admin)
-			fmt.Println("err q ", err)
-			fmt.Println(admin)
 			if err != nil {
+				fmt.Println("err q ", err)
 				helper.Log(logrus.PanicLevel, err.Error(), "Receive Message", "error query get alias")
 				return
 			}
@@ -85,7 +84,7 @@ func (s *telegramUseCaseImpl) OnNewMessage(m *tb.Message) {
 					ID:     &chat.ID,
 					Text:   m.Text,
 					UserId: match[1],
-					Alias:  admin.Alias,
+					Alias:  *admin.Alias,
 					Name:   admin.Name,
 					Time:   time.Now().String(),
 					From:   "admin",
@@ -118,7 +117,7 @@ func (s *telegramUseCaseImpl) OnRegisterAlias(m *tb.Message) {
 			} else {
 				alias := &model.AdminAlias{
 					AdminId:  m.Sender.ID,
-					Alias:    match[2],
+					Alias:    &match[2],
 					Username: m.Sender.Username,
 					Name:     m.Sender.FirstName + ` ` + m.Sender.LastName,
 				}
@@ -127,7 +126,7 @@ func (s *telegramUseCaseImpl) OnRegisterAlias(m *tb.Message) {
 				s.bot.Send(m.Chat, `Success save alias`)
 			}
 		case "remove":
-			s.query.DeleteAlias(m.Sender.ID)
+			s.query.DeleteAlias(uint64(m.Sender.ID))
 			s.bot.Send(m.Chat, `Success delete alias`)
 		case "info":
 			info, err := s.query.GetAlias(m.Sender.ID)
@@ -135,10 +134,10 @@ func (s *telegramUseCaseImpl) OnRegisterAlias(m *tb.Message) {
 				s.bot.Send(m.Chat, "Sorry something error on query.")
 				return
 			}
-			if info == nil || len(info.Alias) == 0 {
+			if info == nil || info.Alias == nil {
 				s.bot.Send(m.Chat, "Your alias is not set.", tb.ModeHTML)
 			} else {
-				s.bot.Send(m.Chat, "Your alias is <b>"+info.Alias+"</b>", tb.ModeHTML)
+				s.bot.Send(m.Chat, "Your alias is <b>"+*info.Alias+"</b>", tb.ModeHTML)
 			}
 		}
 	} else {
@@ -172,9 +171,9 @@ func (s *telegramUseCaseImpl) OnCommandEndChat(m *tb.Message) {
 			}
 
 			s.channel <- &TelegramMessage{
-				Text:    admin.Alias + ` end this chat`,
+				Text:    *admin.Alias + ` end this chat`,
 				UserId:  match[1],
-				Name:    admin.Alias,
+				Name:    *admin.Alias,
 				Time:    time.Now().String(),
 				From:    "admin",
 				Type:    "notification",

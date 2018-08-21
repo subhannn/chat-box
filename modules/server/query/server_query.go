@@ -34,8 +34,9 @@ func (u *serverQueryImpl) AdminCreateOrUpdate(admin *model.AdminAlias) error {
 		return err
 	}
 
-	if len(admin.Alias) == 0 {
-		admin.Alias = `Admin`
+	if admin.Alias == nil {
+		na := `Admin`
+		admin.Alias = &na
 	}
 
 	return nil
@@ -50,8 +51,8 @@ func (u *serverQueryImpl) SaveAlias(admin model.AdminAlias) error {
 	return nil
 }
 
-func (u *serverQueryImpl) DeleteAlias(id int) error {
-	err := u.db.Table("admin_aliases").Where(`"adminId" = ?`, id).Update(model.AdminAlias{Alias: ""}).Error
+func (u *serverQueryImpl) DeleteAlias(id uint64) error {
+	err := u.db.Exec(`UPDATE admin_aliases set alias = NULL where "adminId" = ?`, id).Error
 	if err != nil {
 		return err
 	}
@@ -65,7 +66,7 @@ func (u *serverQueryImpl) GetAlias(id int) (*model.AdminAlias, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
-
+	fmt.Println(alias)
 	if alias == (model.AdminAlias{}) {
 		return nil, nil
 	}

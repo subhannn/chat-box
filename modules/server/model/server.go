@@ -17,7 +17,7 @@ type User struct {
 type AdminAlias struct {
 	ID        uint64    `gorm:"primary_key" gorm:"column:_id" json:"_id"`
 	AdminId   int       `gorm:"column:adminId" gorm:"index" json:"adminId"`
-	Alias     string    `gorm:"column:alias" sql:"DEFAULT:'Admin'" json:"alias"`
+	Alias     *string   `gorm:"column:alias" json:"alias"`
 	Username  string    `gorm:"column:username" json:"username"`
 	Name      string    `gorm:"column:name" json:"name"`
 	CreatedAt time.Time `gorm:"column:createdAt" json:"createdAt"`
