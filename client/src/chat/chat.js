@@ -72,8 +72,6 @@ export default class Chat extends Component {
             var c = this.input.clientHeight + this.banner.clientHeight
             this.contEle.style.cssText = 'bottom: '+c+'px';
         }
-
-        this.loadMessages()
     }
 
     loadMessages = (before) => {
@@ -112,6 +110,8 @@ export default class Chat extends Component {
 
     onConnect = () => {
         console.log("connect")
+        this.loadMessages()
+        
         this.socket.emit("register", {
             userId: this.props.userId,
             chatId: this.props.chatId,
