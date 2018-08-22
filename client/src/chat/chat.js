@@ -273,6 +273,9 @@ export default class Chat extends Component {
                         resolve(true)
                     }
                 })
+                $this.socket.on('disconnect', function(){
+                    reject("rejected")
+                })
             } },
         })
     }
