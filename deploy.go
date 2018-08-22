@@ -8,7 +8,7 @@ import (
 	"os/exec"
 )
 
-func main() {
+func main2() {
 	http.HandleFunc("/deploy", handleDeploy)
 
 	err := http.ListenAndServe(":8888", nil)
@@ -38,7 +38,7 @@ func handleDeploy(w http.ResponseWriter, r *http.Request) {
 
 func shellExecBranch(ref string) {
 	if ref == "refs/heads/master" {
-		cd := exec.Command("cd")
+		// cd := exec.Command("cd", "/home/golang/go/src/telegram.chatbox")
 		pull := exec.Command("git", "pull", "-f")
 		err := pull.Run()
 		if err != nil {
