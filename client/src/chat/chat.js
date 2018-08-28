@@ -40,11 +40,6 @@ export default class Chat extends Component {
         if (store.enabled) {
             this.messagesKey = 'messages' + '.' + props.chatId + '.' + props.host;
             this.state.messages = store.get(this.messagesKey) || store.set(this.messagesKey, []);
-            let info = store.get('userInfo')
-            if(info){
-                this.props.name = info.name
-                this.props.email = info.email
-            }
         } else {
             this.state.messages = [];
         }
@@ -53,10 +48,11 @@ export default class Chat extends Component {
     componentDidMount() {
         var scheme = document.location.protocol == "https:" ? "wss" : "ws";
         var port = document.location.port ? (":" + document.location.port) : "";
-        // see app.Get("/echo", ws.Handler()) on main.go
-        var wsURL = scheme + "://" + document.location.hostname + port+"/ws";
+        var wsURL = scheme + "://" + document.location.hostname + port;
 
-        this.socket = io(wsURL);
+        this.socket = io(wsURL, {
+            path: '/ws'
+        });
 
         this.socket.on("connect", this.onConnect)
         this.socket.on("disconnect", this.onDisconnect)
@@ -119,11 +115,28 @@ export default class Chat extends Component {
             userId: this.props.userId,
             chatId: this.props.chatId,
             name: this.props.name,
-            email: this.props.email
+            email: this.props.email,
+            phone: this.props.phone,
         }, function(data){
             $this.setState({
                 userPhoto: data.photo
             })
+
+            if ($this.props.newRegister==true) {
+                let datas = {
+                    chatId: $this.props.chatId, 
+                    userId: $this.props.userId,
+                    name: $this.props.name,
+                    email: $this.props.email,
+                    text: $this.props.message,
+                    phone: $this.props.phone,
+                    from: 'visitor',
+                    type: 'intro'
+                }
+                $this.props.newRegister = false
+                
+                $this.sendChat(datas)
+            }
         })
     }
 
@@ -131,11 +144,19 @@ export default class Chat extends Component {
         console.log("disconnect")
     }
 
-    render({},state) {
+    render(props,state) {
+        this.props = props
+
+        let info = store.get('userInfo')
+        if(typeof this.props.name == 'undefined'){
+            this.props.name = info.name
+            this.props.email = info.email
+        }
+
         return (
             <div>
                 <div class="contMsg" ref={(ele) => { this.contEle = ele } } onScroll={this.onMessageScroll}>
-                    <MessageArea messages={this.state.messages} conf={this.props.conf}/>
+                    <MessageArea messages={this.state.messages} conf={this.props.conf} onResend={this.resendMessage}/>
                 </div>
                 <GoBot conf={this.props.conf} show={this.state.showGoBot} onGoBot={() => {
                     this.setState({
@@ -260,22 +281,33 @@ export default class Chat extends Component {
 
     sendChat = (data) => {
         var $this = this
-        var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, true, this.state.userPhoto)
+        var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, 'loading', this.state.userPhoto)
         setTimeout(function(){
             $this.autoScrollToBot()
         }, 100)
+        this.sendMessageChannel(data, index)
+    }
+
+    sendMessageChannel = (data, index) => {
+        var $this = this
         channelA.add({
             handler: "MessageWorker",
+            tag: "message-"+index,
             args: { callback: function(resolve, reject){
-                $this.socket.emit("chat", data, (data) => {
-                    if (typeof data != 'undefined' && typeof data != 'null'){
-                        $this.messageComplete(index, data.id)
-                        resolve(true)
-                    }
-                })
-                $this.socket.on('disconnect', function(){
-                    reject("rejected")
-                })
+                console.log("isConnected?", $this.socket.connected)
+                if ($this.socket.connected) {
+                    $this.socket.emit("chat", data, (data) => {
+                        if (typeof data != 'undefined' && typeof data != 'null'){
+                            $this.messageComplete(index, data.id, false)
+                            resolve(true)
+                        }
+                    })
+                }else{
+                    setTimeout(function(){
+                        $this.messageComplete(index, data.id, 'failed')
+                        reject(true)
+                    }, 300)
+                }
             } },
         })
     }
@@ -291,7 +323,7 @@ export default class Chat extends Component {
             photo: photo,
             from: from,
             type: type,
-            loading: (loading==true)
+            loading: loading
         }
         var len = this.state.messages.length
         var newMsg = this.state.messages.push(msg)
@@ -302,11 +334,31 @@ export default class Chat extends Component {
         return len
     }
 
-    messageComplete = (index, newId) => {
+    resendMessage = (index) => {
+        console.log('resend', index)
+        if (typeof this.state.messages[index] != 'undefined'){
+            this.messageComplete(index, 0, 'loading')
+            let data = {
+                chatId: this.props.chatId, 
+                userId: this.props.userId,
+                name: this.props.name,
+                email: this.props.email,
+                text: this.state.messages[index]['text'],
+                from: 'visitor',
+                type: 'chat'
+            }
+
+            this.sendMessageChannel(data, index)
+        }else{
+            console.log('tidak ada')
+        }
+    }
+
+    messageComplete = (index, newId, status) => {
         if (typeof this.state.messages[index] != 'undefined'){
             console.log('update')
             this.state.messages[index]['id'] = newId
-            this.state.messages[index]['loading'] = false
+            this.state.messages[index]['loading'] = status
 
             this.setState({
                 message: this.state.messages

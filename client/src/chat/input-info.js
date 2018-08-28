@@ -27,7 +27,15 @@ export default class InputInfo extends Component {
                                 </div>
                                 <div class="field-cont">
                                     <label>E-mail: <span>*</span></label>
-                                    <input type="email" name="emai" required onChange={linkState(this, 'email')} />
+                                    <input type="email" name="email" required onChange={linkState(this, 'email')} />
+                                </div>
+                                <div class="field-cont">
+                                    <label>Phone No. <span class="muted">(optional)</span></label>
+                                    <input type="number" min="6" name="phone" onChange={linkState(this, 'phone')} />
+                                </div>
+                                <div class="field-cont">
+                                    <label>Message: <span>*</span></label>
+                                    <textarea rows="4" required name="message" onInput={linkState(this, 'message')}></textarea>
                                 </div>
                             </div>
                         </div>
@@ -56,21 +64,37 @@ export default class InputInfo extends Component {
 
     setUser = () => {
         if(!this.state.name || !this.state.email){
-            alert("Please input your name and email.")
+            alert("Please input your name and valid email.")
+            return
+        }
+
+        if (!this.state.message) {
+            alert("Please input your message.")
             return
         }
 
         this.props.name = this.state.name
         this.props.email = this.state.email
+        this.props.message = this.state.message
+        this.props.phone = this.state.phone
+        this.props.newRegister = true
 
         store.set('userInfo', {
             name: this.state.name,
             email: this.state.email
         })
 
+        store.set('users', {
+            name: this.state.name,
+            email: this.state.email,
+            phone: this.state.phone
+        })
+
         this.setState({
             email: this.state.email,
             name: this.state.name,
+            phone: this.state.phone,
+            message: this.state.message,
             readyConnect: true
         })
     }

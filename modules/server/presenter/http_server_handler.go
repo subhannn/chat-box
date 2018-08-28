@@ -44,7 +44,7 @@ func NewHTTPServerHandler(db *gorm.DB, bot *tb.Bot) *HttpServerHandler {
 }
 
 func (s *HttpServerHandler) Mount(ec *echo.Echo) {
-	ec.Any("/socket.io/", func(c echo.Context) error {
+	ec.Any("/ws/", func(c echo.Context) error {
 		s.socketServer.ServeHTTP(c.Response(), c.Request())
 		return nil
 	})

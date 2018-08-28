@@ -16,4 +16,5 @@ type SocketMessage struct {
 	Type    string  `json:"type"`
 	Command string  `json:"command"`
 	Photo   string  `json:"photo"`
+	Phone   string  `json:"phone"`
 }

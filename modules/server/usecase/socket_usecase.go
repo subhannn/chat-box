@@ -74,7 +74,7 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 				UserId: &user.ID,
 				Text:   msg.Text,
 				From:   "visitor",
-				Type:   "chat",
+				Type:   msg.Type,
 			}
 			err := c.query.SaveChat(chat)
 			if err == nil {
@@ -100,6 +100,7 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 		Photo string `json:"photo"`
 	}
 	so.On("register", func(msg SocketMessage) *ms {
+		fmt.Println(msg)
 		fmt.Println("Register UserId ", msg.UserId, " With ConnectionID ", so.Id())
 		user := &model.User{
 			ClientId:    msg.UserId,

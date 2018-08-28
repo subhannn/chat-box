@@ -43,7 +43,11 @@ func (s *telegramUseCaseImpl) Send(from SocketMessage, chatId string, message st
 	recipent := &TelegramSender{
 		ChatId: chatId,
 	}
-	s.bot.Send(recipent, formatMessageFromClient(from, message), tb.ModeHTML)
+	newMsg := formatMessageFromClient(from, message)
+	if from.Type == "intro" {
+		newMsg = formatIntroMessageFromClient(from)
+	}
+	s.bot.Send(recipent, newMsg, tb.ModeHTML)
 	return nil
 }
 
@@ -214,5 +218,18 @@ func (s *telegramUseCaseImpl) endSession(clientId string) error {
 
 func formatMessageFromClient(from SocketMessage, message string) string {
 	text := `<b>` + from.Name + `</b> (` + from.UserId + ") :\n" + message
+	return text
+}
+
+func formatIntroMessageFromClient(from SocketMessage) string {
+	fmt.Println(from)
+	text := `<b>` + from.Name + `</b> (` + from.UserId + ") :\nNew User Connected\nEmail : %s\n"
+	if from.Phone != "" {
+		text += "Phone : " + from.Phone + "\n"
+	}
+	text += "Message : \n%s"
+
+	text = fmt.Sprintf(text, from.Email, from.Text)
+
 	return text
 }

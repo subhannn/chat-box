@@ -35,3 +35,9 @@ type Chat struct {
 	CreatedAt time.Time `gorm:"column:createdAt" json:"createdAt"`
 	UpdatedAt time.Time `gorm:"column:updatedAt" json:"updatedAt"`
 }
+
+type TestTable struct {
+	ID        string    `gorm:"primary_key" gorm:"column:id" json:"id"`
+	CreatedAt time.Time `gorm:"column:createdAt;type:date" json:"createdAt"`
+	UpdatedAt time.Time `gorm:"column:updatedAt;type:date" json:"updatedAt"`
+}

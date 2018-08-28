@@ -18,17 +18,19 @@ export default class MessageArea extends Component {
         const currentTime = new Date();
         return (
             <ol class="chat">
-                {props.messages.map(({id, name, text, from, time, type, photo, loading}) => {
+                {props.messages.map(({id, name, text, from, time, type, photo, loading}, index) => {
                     if (from === 'visitor') {
                         name = "You";
                     }
-                    if (type == 'chat') {
+                    if (type == 'chat' || type == 'intro') {
                     return (
                         <li class={from} data-id={id}>
                             <div class="msg">
                                 {
-                                    (loading==true)?
-                                    <MsgLoading />
+                                    (loading)?
+                                    <MsgLoading loading={loading} onResend={() => {
+                                        props.onResend(index)
+                                    }} />
                                     :
                                     ''
                                 }

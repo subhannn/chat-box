@@ -230,12 +230,14 @@ a.banner {
     top: 0;
     padding: 22px 22px 0 22px;
     border-bottom: 1px solid #dfdfdf;
+    overflow-y: scroll;
 }
 
 .cont .sr-info{
     position: relative;
     width: 100%;
     overflow-y: auto;
+    margin-bottom: 30px;
 }
 
 .field-cont{
@@ -256,7 +258,13 @@ a.banner {
     outline: none;
     border-color: rgb(66, 127, 225);
 }
-.field-cont > input{
+
+.field-cont > textarea:focus{
+    outline: none;
+    border-color: rgb(66, 127, 225);
+}
+
+.field-cont > input, .field-cont > textarea{
     margin: 0;
     display: block;
     box-shadow: none;
@@ -273,6 +281,7 @@ a.banner {
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
+    resize: vertical;
 }
 
 .button-action button:focus{
@@ -372,4 +381,8 @@ a.banner {
     display: flex;
     border-radius: 50%;
     padding: 2px;
+}
+
+.muted{
+    color: #dfdfdf !important;
 }
