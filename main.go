@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"github.com/sirupsen/logrus"
 	"telegram.chatbox/config"
 	"telegram.chatbox/helper"
@@ -14,7 +15,8 @@ import (
 func main() {
 	http := echo.New()
 
-	// http.Use(middleware.Logger()
+	// http.Use(middleware.Logger())
+	http.Use(middleware.CORS())
 
 	port := os.Getenv("PORT")
 

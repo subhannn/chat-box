@@ -10,3 +10,4 @@ client/package.json
 .env.local
 .env
 telegram
+vendor/*

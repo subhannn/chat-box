@@ -8,6 +8,21 @@ if (window.attachEvent) {
     window.addEventListener('load', init, false);
 }
 
+window.getRunningScript = function() {
+    let err = new Error()
+    let link = err.stack.split('(')
+    link = link[1]
+    link = link.split(')')[0]
+    link = link.split(':')
+    link.splice(-2, 2)
+    link = link.join(':')
+
+    var l = document.createElement("a")
+    l.href = link
+
+    return l
+}
+
 function init(){
     if(typeof window.chatAsyncInit == "function"){
         window.Chat = new ChatObject()
@@ -33,11 +48,12 @@ class ChatObject {
             let root = document.createElement('div');
             root.id = 'chatBoxRoot';
             document.getElementsByTagName('body')[0].appendChild(root);
-            const server = defaultConfiguration.serverUrl || window.location.protocol+'//'+window.location.host;
+            var currentPath = getRunningScript()
+            const server = defaultConfiguration.serverUrl || currentPath.protocol+'//'+currentPath.host;
             const iFrameSrc = server + '/chat.html';
             const host = window.location.host || 'unknown-host';
             const conf = { ...defaultConfiguration, ...window.intergramCustomizations };
-    
+
             render(
                 <Widget channelId={defaultConfiguration.channelId}
                         host={host}

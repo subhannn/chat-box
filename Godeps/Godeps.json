@@ -4,6 +4,11 @@
 	"GodepVersion": "v80",
 	"Deps": [
 		{
+			"ImportPath": "github.com/dgrijalva/jwt-go",
+			"Comment": "v3.2.0-2-g0b96aaa",
+			"Rev": "0b96aaa707760d6ab28d9b9d1913ff5993328bae"
+		},
+		{
 			"ImportPath": "github.com/googollee/go-engine.io",
 			"Rev": "3c3145340e676971209507021a435520c2700d92"
 		},
@@ -62,12 +67,27 @@
 			"Rev": "74f9806b34424e53aa1ad066d5219d7eab3a3b6c"
 		},
 		{
+			"ImportPath": "github.com/labstack/echo/middleware",
+			"Comment": "3.3.4-34-g74f9806",
+			"Rev": "74f9806b34424e53aa1ad066d5219d7eab3a3b6c"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/bytes",
+			"Comment": "0.2.6-1-g2a61830",
+			"Rev": "2a618302b929cc20862dda3aa6f02f64dbe740dd"
+		},
+		{
 			"ImportPath": "github.com/labstack/gommon/color",
 			"Comment": "0.2.6-1-g2a61830",
 			"Rev": "2a618302b929cc20862dda3aa6f02f64dbe740dd"
 		},
 		{
 			"ImportPath": "github.com/labstack/gommon/log",
+			"Comment": "0.2.6-1-g2a61830",
+			"Rev": "2a618302b929cc20862dda3aa6f02f64dbe740dd"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/random",
 			"Comment": "0.2.6-1-g2a61830",
 			"Rev": "2a618302b929cc20862dda3aa6f02f64dbe740dd"
 		},
