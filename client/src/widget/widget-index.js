@@ -50,6 +50,7 @@ class ChatObject {
             document.getElementsByTagName('body')[0].appendChild(root);
             var currentPath = getRunningScript()
             const server = defaultConfiguration.serverUrl || currentPath.protocol+'//'+currentPath.host;
+            console.log(server)
             const iFrameSrc = server + '/chat.html';
             const host = window.location.host || 'unknown-host';
             const conf = { ...defaultConfiguration, ...window.intergramCustomizations };
