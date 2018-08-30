@@ -14,6 +14,21 @@ if (token) {
         console.log('Failed to parse conf', confString, e);
     }
 }
+window.getRunningScript = function() {
+    let err = new Error()
+    let link = err.stack.split('(')
+    link = link[1]
+    link = link.split(')')[0]
+    link = link.split(':')
+    link.splice(-2, 2)
+    link = link.join(':')
+
+    var l = document.createElement("a")
+    l.href = link
+
+    return l
+}
+window.document.domain = getRunningScript().host
 
 render(
     // <Chat

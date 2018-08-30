@@ -21,7 +21,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		port = "9000"
+		port = "80"
 	}
 
 	db, err := config.InitDb()
@@ -34,6 +34,9 @@ func main() {
 		helper.Log(logrus.PanicLevel, err2.Error(), "MakeHandler", "failed to created Telegram connection")
 	}
 
+	http.Any("/chat.html", func(c echo.Context) error {
+		return c.File("client/chat.html")
+	})
 	http.Static("/", "client")
 
 	httpServerHandler := presenter.NewHTTPServerHandler(db, telegram)

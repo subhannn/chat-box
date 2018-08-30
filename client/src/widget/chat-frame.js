@@ -1,31 +1,60 @@
 import { h, Component } from 'preact';
 var jwt = require('jwt-simple');
+var $ = require('jquery');
 
 export default class ChatFrame extends Component {
-    
+    frameId = 'chatFrame'
+
     constructor(props){
         super(props)
     }
 
-    onIframeLoad = () => {
-        var iframe = document.getElementById('chatIframe');
-        var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-        innerDoc.getElementById("cancel").addEventListener('click', this.onCancel)
+    componentDidMount() {
+        this.onDone()
+        var $this = this
+        $(this.iframe)
+            .on('load', function(){
+                setTimeout(function(){
+                    $this.onLoad(this)
+                }.bind(this), 200)
+            })
     }
 
-    onCancel = (e) => {
-        this.props.onCancel()
+    onLoad = (ele) => {
+        var iframe = $(ele).contents()
+        iframe.find('#cancel').on('click', function(e){
+            e.preventDefault()
+            this.props.onCancel()
+        }.bind(this))
+    }
+
+    onDone = () => {
+        var host = getRunningScript()
+        let ecode = jwt.encode(JSON.stringify(this.props.conf), host.hostname)
+        this.tempForm = $('<form id="chatIframe" method="post" />')
+        .attr( {
+            id: this.frameId,
+            target: this.frameId,
+            action: this.props.iFrameSrc + '?token=' + ecode+'&host='+host.hostname
+        } )
+        .appendTo( 'body' );
+
+        $.ajaxSetup({
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+        })
+        this.tempForm.submit().remove();
     }
 
     render({channelId, host, iFrameSrc, isMobile, conf},{}) {
         let dynamicConf = window.intergramOnOpen || {}; // these configuration are loaded when the chat frame is opened
-        let encodedConf = encodeURIComponent(JSON.stringify({...conf, ...dynamicConf}));
-        let ecode = jwt.encode(JSON.stringify(conf), host)
         
         return (
-            <iframe id="chatIframe" ref={(ele) => {
+            <iframe id={this.frameId} ref={ele => {
                 this.iframe = ele
-            }} onload={this.onIframeLoad} src={iFrameSrc + '?token=' + ecode + '&host=' + host }
+            }} src="about:blank;" name={this.frameId}
                     width='100%'
                     height={isMobile ? '94%' : '100%'}
                     frameborder='0' />
