@@ -22,6 +22,7 @@ export default class ChatFrame extends Component {
 
     onLoad = (ele) => {
         var iframe = $(ele).contents()
+        console.log(iframe)
         iframe.find('#cancel').on('click', function(e){
             e.preventDefault()
             this.props.onCancel()
@@ -34,18 +35,29 @@ export default class ChatFrame extends Component {
         this.tempForm = $('<form id="chatIframe" method="post" />')
         .attr( {
             id: this.frameId,
-            target: this.frameId,
+            // target: this.frameId,
             action: this.props.iFrameSrc + '?token=' + ecode+'&host='+host.hostname
         } )
         .appendTo( 'body' );
-
-        $.ajaxSetup({
-            xhrFields: {
-                withCredentials: true
-            },
-            crossDomain: true,
-        })
-        this.tempForm.submit().remove();
+        var $this = this
+        var currentPath = getRunningScript()
+        // $.ajaxSetup()
+        $('#chatIframe').submit(function(e){
+            var $form = this
+            e.preventDefault()
+            $.ajax({
+                type: "POST",
+                url: $(this).attr('action'),
+                headers: {
+                    "Origin-Form": currentPath.protocol+'//'+currentPath.host
+                },
+                success: function(data)
+                {
+                    console.log(data)
+                    $('#chatFrame', data)
+                }
+            });
+        }).remove();
     }
 
     render({channelId, host, iFrameSrc, isMobile, conf},{}) {

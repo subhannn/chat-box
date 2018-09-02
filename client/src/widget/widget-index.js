@@ -53,7 +53,7 @@ class ChatObject {
             const iFrameSrc = server + '/chat.html';
             const host = window.location.host || 'unknown-host';
             const conf = { ...defaultConfiguration, ...window.intergramCustomizations };
-            window.document.domain = currentPath.host
+            // window.document.domain = currentPath.host
 
             render(
                 <Widget channelId={defaultConfiguration.channelId}
