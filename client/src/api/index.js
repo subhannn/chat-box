@@ -1,6 +1,7 @@
 import { h, render } from 'preact';
 import {defaultConfiguration} from '../widget/default-configuration';
 import ChatFrame from './chat-frame';
+import {$, jQuery} from 'jquery'
 var jwt = require('jwt-simple')
 
 import {
@@ -59,6 +60,12 @@ class ChatObject {
     init(options){
         Object.assign(defaultConfiguration, options)
         
+        window.addEventListener('message', function(e){
+            if (typeof e.data.message != 'undefined' && e.data.message == "chatopened") {
+                this.chatOpened(e.data.isChatOpen)
+            }
+        }.bind(this))
+
         this.injectIframe()
     }
 
@@ -73,10 +80,11 @@ class ChatObject {
             const server = defaultConfiguration.serverUrl || currentPath.protocol+'//'+currentPath.host;
             defaultConfiguration.serverUrl = server
             this.conf = { ...defaultConfiguration, ...window.intergramCustomizations };
+            this.conf.origin = document.location.protocol+'//'+document.location.host
             
             this.chatOpened(false)
             var token = jwt.encode(this.conf, "apikmedia123")
-            chatLog(token)
+            // chatLog(token)
 
             render(
                 <ChatFrame styles={iframeContainer} iFrameSrc={server+'/iframe'} token={token} conf={this.conf} />,
@@ -89,12 +97,12 @@ class ChatObject {
         const wrapperWidth = {width: this.conf.desktopWidth};
         const desktopHeight = (window.innerHeight - 100 < this.conf.desktopHeight) ? window.innerHeight - 90 : this.conf.desktopHeight;
         const wrapperHeight = {height: desktopHeight+'px'};
-        console.log(wrapperHeight)
+        
         var isMobile = false
         if (window.screen.width < 500){
             isMobile = true
         }
-        console.log(isChatOpen)
+        
         let wrapperStyle;
         if (!isChatOpen && (isMobile || this.conf.alwaysUseFloatingButton)) {
             wrapperStyle = { ...mobileClosedWrapperStyle}; // closed mobile floating button

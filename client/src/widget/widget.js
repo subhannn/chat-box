@@ -27,13 +27,16 @@ export default class Widget extends Component {
             this.state.isChatOpen = true
             this.state.pristine = false
         }
-
-        if (typeof parent.Chat != 'undefined') {
-            parent.Chat.chatOpened(this.state.isChatOpen)
-        }
     }
 
     render({conf, isMobile}, {isChatOpen, pristine}) {
+        parent.postMessage(
+            {
+                message: "chatopened",
+                isChatOpen: this.state.isChatOpen
+            },
+            conf.origin
+        )
 
         const wrapperWidth = {width: conf.desktopWidth};
         const desktopHeight = (window.innerHeight - 100 < conf.desktopHeight) ? window.innerHeight - 90 : conf.desktopHeight;
@@ -114,9 +117,13 @@ export default class Widget extends Component {
     }
 
     onClick = () => {
-        if (typeof parent.Chat != 'undefined') {
-            parent.Chat.chatOpened(!this.state.isChatOpen)
-        }
+        parent.postMessage(
+            {
+                message: "chatopened",
+                isChatOpen: !this.state.isChatOpen
+            },
+            this.props.conf.origin
+        )
         let stateData = {
             pristine: false,
             isChatOpen: !this.state.isChatOpen,

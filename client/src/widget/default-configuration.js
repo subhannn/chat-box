@@ -17,4 +17,5 @@ export const defaultConfiguration = {
     desktopWidth: 370,
     serverUrl: null,
     isMobile: false,
+    origin: null,
 };

@@ -33,15 +33,15 @@ window.chatLog = function(){
 function init(){
     var token = getUrlParameter('token')
     if (token != "") {
-        try {
+        // try {
             let confString = jwt.decode(token, "apikmedia123", true)
-
-            chatLog(confString)
+            // console.log(confString)
+            // chatLog(confString)
             var chat = new ChatObject()
             chat.init(confString)
-        } catch (e) {
-            console.log('Failed to parse conf', e);
-        }
+        // } catch (e) {
+        //     console.log('Failed to parse conf', e);
+        // }
     }
 }
 
