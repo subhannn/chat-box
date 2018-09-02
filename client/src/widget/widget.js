@@ -4,6 +4,8 @@ import ChatFloatingButton from './chat-floating-button';
 import ChatTitleMsg from './chat-title-msg';
 import ArrowIcon from './arrow-icon';
 import * as store from 'store'
+import InputInfo from './input-info';
+
 import {
     desktopTitleStyle, 
     desktopWrapperStyle,
@@ -97,7 +99,10 @@ export default class Widget extends Component {
                     height: isMobile ? '100%' : desktopHeight,
                     position: 'relative'
                 }}>
-                    {pristine ? null : <ChatFrame {...this.props} onCancel={this.onClick}/> }
+                    {pristine ? null : <InputInfo 
+                        chatId={conf.channelId}
+                        userId={this.getUserId()}
+                    conf={conf} /> }
                 </div>
 
             </div>
@@ -145,5 +150,17 @@ export default class Widget extends Component {
         } else {
             return false;
         }
+    }
+
+    getUserId = () => {
+        if (store.enabled) {
+            return store.get('userId') || store.set('userId', this.generateRandomId());
+        } else {
+            return this.generateRandomId();
+        }
+    }
+
+    generateRandomId = () => {
+        return Math.random().toString(36).substr(2, 6);
     }
 }

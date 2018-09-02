@@ -21,7 +21,7 @@ func main() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		port = "80"
+		port = "9000"
 	}
 
 	db, err := config.InitDb()

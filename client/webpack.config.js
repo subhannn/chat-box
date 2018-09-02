@@ -7,9 +7,9 @@ module.exports = {
         widget: [
             path.join(__dirname, 'src', 'widget', 'widget-index.js')
         ],
-        chat: [
-            path.join(__dirname, 'src', 'chat', 'chat-index.js')
-        ],
+        // chat: [
+        //     path.join(__dirname, 'src', 'chat', 'chat-index.js')
+        // ],
     },
     output: {
         path: path.join(__dirname, 'dist', 'js'),
@@ -18,8 +18,16 @@ module.exports = {
     },
     module: {
         loaders: [
+            {
+                include: path.join(__dirname, 'src/widget'),
+                loaders: [
+                  'style-loader',
+                  'css-loader?importLoader=1&modules&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
+                ],
+                test: /\.css$/
+            },
             { test: /\.js$/, loaders: ['babel-loader'], include: path.join(__dirname, 'src'), exclude: /node_modules/ },
-            { test: /\.css$/, loader: 'style!css!sass', include: path.join(__dirname, 'css') },
+            // { test: /\.css$/, loader: 'style!css!sass', include: path.join(__dirname, 'css') },
         ]
     },
     plugins: [
