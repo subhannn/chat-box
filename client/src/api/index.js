@@ -8,8 +8,10 @@ import {
     desktopWrapperStyle,
     mobileOpenWrapperStyle, 
     mobileClosedWrapperStyle,
-    desktopClosedWrapperStyleChat,
+    iframeContainer,
     chatOpened,
+    desktopCloseContainer,
+    desktopOpenContainer,
 } from "../widget/style";
 
 if (window.attachEvent) {
@@ -47,6 +49,9 @@ function init(){
 }
 
 class ChatObject {
+    root = null
+    conf = {}
+
     constructor(){
         return this
     }
@@ -61,44 +66,65 @@ class ChatObject {
         if (!defaultConfiguration.channelId) {
             console.error('Please set channelId in Init Config');
         } else {
-            let root = document.createElement('div');
-            root.id = 'chatBoxRoot';
-            document.getElementsByTagName('body')[0].appendChild(root);
+            this.root = document.createElement('div');
+            this.root.id = 'chatBoxRoot';
+            document.getElementsByTagName('body')[0].appendChild(this.root);
             var currentPath = getRunningScript()
             const server = defaultConfiguration.serverUrl || currentPath.protocol+'//'+currentPath.host;
             defaultConfiguration.serverUrl = server
-            const conf = { ...defaultConfiguration, ...window.intergramCustomizations };
+            this.conf = { ...defaultConfiguration, ...window.intergramCustomizations };
             
-            var isChatOpen = false
-            var isMobile = false
-            if (window.screen.width < 500){
-                isMobile = true
-            }
-
-            let wrapperStyle;
-            if (!isChatOpen && (isMobile || conf.alwaysUseFloatingButton)) {
-                wrapperStyle = { ...mobileClosedWrapperStyle}; // closed mobile floating button
-            } else if (!isMobile){
-                wrapperStyle = (conf.closedStyle === 'chat' || isChatOpen || this.wasChatOpened()) ?
-                    (isChatOpen) ? 
-                        { ...desktopWrapperStyle, ...wrapperWidth, ...chatOpened} // desktop mode, button style
-                        :
-                        { ...desktopWrapperStyle}
-                    :
-                    { ...desktopClosedWrapperStyleChat}; // desktop mode, chat style
-            } else {
-                wrapperStyle = mobileOpenWrapperStyle; // open mobile wrapper should have no border
-            }
-            conf.isMobile = isMobile
-
-            var token = jwt.encode(conf, "apikmedia123")
+            this.chatOpened(false)
+            var token = jwt.encode(this.conf, "apikmedia123")
             chatLog(token)
-            
-            Object.assign(root.style, wrapperStyle);
+
             render(
-                <ChatFrame iFrameSrc={server+'/iframe'} token={token} conf={conf} />,
-                root,
+                <ChatFrame styles={iframeContainer} iFrameSrc={server+'/iframe'} token={token} conf={this.conf} />,
+                this.root,
             );
         }
+    }
+
+    chatOpened = (isChatOpen) => {
+        const wrapperWidth = {width: this.conf.desktopWidth};
+        const desktopHeight = (window.innerHeight - 100 < this.conf.desktopHeight) ? window.innerHeight - 90 : this.conf.desktopHeight;
+        const wrapperHeight = {height: desktopHeight+'px'};
+        console.log(wrapperHeight)
+        var isMobile = false
+        if (window.screen.width < 500){
+            isMobile = true
+        }
+        console.log(isChatOpen)
+        let wrapperStyle;
+        if (!isChatOpen && (isMobile || this.conf.alwaysUseFloatingButton)) {
+            wrapperStyle = { ...mobileClosedWrapperStyle}; // closed mobile floating button
+        } else if (!isMobile){
+            wrapperStyle = (this.conf.closedStyle === 'chat' || isChatOpen || this.wasChatOpened()) ?
+                (isChatOpen) ? 
+                    { ...desktopOpenContainer, ...wrapperHeight} // desktop mode, button style
+                    :
+                    { ...desktopCloseContainer}
+                :
+                { ...desktopOpenContainer}; // desktop mode, chat style
+        } else {
+            wrapperStyle = mobileOpenWrapperStyle; // open mobile wrapper should have no border
+        }
+
+        Object.assign(this.root.style, wrapperStyle);
+    }
+
+    getCookie = () => {
+        var nameEQ = "chatwasopened=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return false;
+    }
+    
+    wasChatOpened = () => {
+        return (this.getCookie() === false) ? false : true;
     }
 }

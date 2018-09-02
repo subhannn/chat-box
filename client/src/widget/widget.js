@@ -4,6 +4,7 @@ import ChatTitleMsg from './chat-title-msg';
 import ArrowIcon from './arrow-icon';
 import * as store from 'store'
 import InputInfo from './input-info';
+import * as $ from 'jquery'
 
 import {
     desktopTitleStyle, 
@@ -12,6 +13,7 @@ import {
     mobileClosedWrapperStyle,
     desktopClosedWrapperStyleChat,
     chatOpened,
+    inputInfoCont,
 } from "./style";
 
 export default class Widget extends Component {
@@ -24,6 +26,10 @@ export default class Widget extends Component {
         if (this.checkWasOpened()) {
             this.state.isChatOpen = true
             this.state.pristine = false
+        }
+
+        if (typeof parent.Chat != 'undefined') {
+            parent.Chat.chatOpened(this.state.isChatOpen)
         }
     }
 
@@ -39,7 +45,7 @@ export default class Widget extends Component {
         } else if (!isMobile){
             wrapperStyle = (conf.closedStyle === 'chat' || isChatOpen || this.wasChatOpened()) ?
                 (isChatOpen) ? 
-                    { ...desktopWrapperStyle, ...wrapperWidth, ...chatOpened} // desktop mode, button style
+                    { ...desktopWrapperStyle, ...chatOpened} // desktop mode, button style
                     :
                     { ...desktopWrapperStyle}
                 :
@@ -93,12 +99,11 @@ export default class Widget extends Component {
                 }
 
                 {/*Chat IFrame*/}
-                <div style={{
+                <div style={{...inputInfoCont, ...{
                     display: isChatOpen ? 'block' : 'none',
-                    height: isMobile ? '100%' : desktopHeight,
-                    position: 'relative'
-                }}>
+                }}}>
                     {pristine ? null : <InputInfo 
+                        onCancel={this.onClick}
                         chatId={conf.channelId}
                         userId={this.getUserId()}
                     conf={conf} /> }
@@ -109,6 +114,9 @@ export default class Widget extends Component {
     }
 
     onClick = () => {
+        if (typeof parent.Chat != 'undefined') {
+            parent.Chat.chatOpened(!this.state.isChatOpen)
+        }
         let stateData = {
             pristine: false,
             isChatOpen: !this.state.isChatOpen,

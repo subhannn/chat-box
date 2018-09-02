@@ -1,16 +1,14 @@
 
 export const desktopWrapperStyle = {
-    position: 'fixed',
-    bottom: 0,
-    right: '32px',
     zIndex: 2147483647,
     boxSizing: 'content-box',
     overflow: 'hidden',
-    borderRadius: '5px 5px 0 0'
+    borderRadius: '5px 5px 0 0',
+    width: '100%',
+    height: '100%',
 };
 
 export const chatOpened = {
-    boxShadow: '0 0 0.5rem 0 rgba(0,0,0,0.2)',
     backgroundColor: 'rgba(255,255,255,0.98)',
 }
 
@@ -98,4 +96,50 @@ export const cancelBtn = {
     color: '#ababab',
     border: '1px solid #dfdfdf',
     padding: '10px 12px',
+}
+
+export const iframeContainer = {
+    backgroundColor: 'transparent',
+    verticalAlign: 'text-bottom',
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    minWidth: '100%',
+    minHeight: '100%',
+    maxWidth: '100%',
+    maxHeight: '100%',
+    margin: '0px',
+    overflow: 'hidden',
+    display: 'block',
+}
+
+export const desktopCloseContainer = {
+    position: 'fixed',
+    bottom: '-1px',
+    right: '32px',
+    zIndex: '2147483647',
+    overflow: 'hidden',
+    borderRadius: '5px 5px 0px 0px',
+    height: '39px',
+    width: '200px',
+}
+
+export const desktopOpenContainer = {
+    position: 'fixed',
+    bottom: '0px',
+    right: '32px',
+    zIndex: '2147483647',
+    overflow: 'hidden',
+    borderRadius: '5px 5px 0px 0px',
+    width: '370px',
+    height: '408px',
+    boxShadow: 'rgba(0, 0, 0, 0.2) 0px 0px 0.5rem 0px',
+}
+
+export const inputInfoCont = {
+    position: 'absolute',
+    top: '39px',
+    bottom: 0,
+    left: 0,
+    right: 0,
 }

@@ -293,7 +293,7 @@ export default class Chat extends Component {
         var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, 'loading', this.state.userPhoto)
         setTimeout(function(){
             $this.autoScrollToBot()
-        }, 100)
+        }, 300)
         this.sendMessageChannel(data, index)
     }
 

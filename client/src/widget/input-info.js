@@ -41,7 +41,7 @@ export default class InputInfo extends Component {
                             </div>
                         </div>
                         <div className={styles.button_action}>
-                            <button name="cancel" id="cancel" type="button" className={styles.end_chat}>Cancel</button>
+                            <button name="cancel" id="cancel" type="button" className={styles.end_chat} onClick={this.onCancel}>Cancel</button>
                             <button style={{
                                 backgroundColor: conf.mainColor
                             }} type="submit" className={styles.start_chat}>Start Chat</button>
@@ -56,6 +56,13 @@ export default class InputInfo extends Component {
                 </div>
             </div>
         );
+    }
+
+    onCancel = () => {
+        var $this = this
+        setTimeout(function(){
+            $this.props.onCancel()
+        }, 100)
     }
 
     onSetInfo = (e) => {

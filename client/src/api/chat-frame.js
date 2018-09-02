@@ -34,9 +34,9 @@ export default class ChatFrame extends Component {
         this.tempForm.submit().remove();
     }
 
-    render({iFrameSrc, isMobile},{}) {
+    render(props,{}) {
         return (
-            <iframe id={this.frameId} ref={ele => {
+            <iframe style={props.styles} id={this.frameId} ref={ele => {
                 this.iframe = ele
             }} src="about:blank;" name={this.frameId}
                     frameborder='0' />
