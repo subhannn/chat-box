@@ -3,6 +3,7 @@ import { h, Component } from 'preact';
 import linkState from 'linkstate';
 import Chat from './chat';
 import styles from './style.css'
+import ReCaptcha from 'preact-grecaptcha';
 
 export default class InputInfo extends Component {
     constructor(props) {
@@ -38,6 +39,11 @@ export default class InputInfo extends Component {
                                     <label>Message: <span>*</span></label>
                                     <textarea rows="4" required name="message" onInput={linkState(this, 'message')}></textarea>
                                 </div>
+                                <div className={styles.field_cont}>
+                                    <ReCaptcha ref={ele => {
+                                        this.captcha = ele
+                                    }} sitekey="6Lf90m0UAAAAABdB9IlGBXn9bf1TWdUCr5VWJ1L-" />
+                                </div>
                             </div>
                         </div>
                         <div className={styles.button_action}>
@@ -71,6 +77,11 @@ export default class InputInfo extends Component {
     };
 
     setUser = () => {
+        if (!this.captcha.getResponse()) {
+            alert("Please validate your captcha first.")
+            return
+        }
+
         if(!this.state.name || !this.state.email){
             alert("Please input your name and valid email.")
             return

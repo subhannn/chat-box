@@ -20,6 +20,8 @@ export default class MessageArea extends Component {
         return (
             <ol className={styles.chat}>
                 {props.messages.map(({id, name, text, from, time, type, photo, loading}, index) => {
+                    var defaultUrlAdmin = props.conf.serverUrl+'/admin.png'
+
                     if (from === 'visitor') {
                         name = "You";
                     }
@@ -41,7 +43,7 @@ export default class MessageArea extends Component {
                                         (photo != null && photo != "")?
                                         <img src={photo+"?s=50"} />
                                         :
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/156381/profile/profile-80.jpg" />
+                                        <img src={defaultUrlAdmin} />
                                     }
                                 </figure>
                                 { text }

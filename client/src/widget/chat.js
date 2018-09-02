@@ -197,8 +197,17 @@ export default class Chat extends Component {
     }
 
     handleKeyPress = (e) => {
+        if (e.keyCode == 13 && this.input.value.trim() == "") {
+            e.preventDefault()
+            return
+        }
+
         if (e.keyCode == 13 && this.input.value) {
             e.preventDefault()
+
+            if (this.input.value.trim() == '') {
+                return
+            }
 
             if (!this.userActive()) {
                 this.writeMessage(0, "Admin", "Your chat has ended, your message not send.", "admin", "notification", false)
