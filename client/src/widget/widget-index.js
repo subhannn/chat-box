@@ -1,6 +1,7 @@
 import { h, render } from 'preact';
 import Widget from './widget';
 import {defaultConfiguration} from './default-configuration';
+var jwt = require('jwt-simple')
 
 if (window.attachEvent) {
     window.attachEvent('onload', init);
@@ -30,10 +31,25 @@ window.chatLog = function(){
 }
 
 function init(){
-    if(typeof window.chatAsyncInit == "function"){
-        window.Chat = new ChatObject()
-        window.chatAsyncInit()
+    var token = getUrlParameter('token')
+    if (token != "") {
+        try {
+            let confString = jwt.decode(token, "apikmedia123", true)
+
+            chatLog(confString)
+            var chat = new ChatObject()
+            chat.init(confString)
+        } catch (e) {
+            console.log('Failed to parse conf', e);
+        }
     }
+}
+
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    let regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    let results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
 class ChatObject {
@@ -63,7 +79,7 @@ class ChatObject {
             render(
                 <Widget channelId={defaultConfiguration.channelId}
                         host={host}
-                        isMobile={window.screen.width < 500}
+                        isMobile={conf.isMobile}
                         conf={conf}
                 />,
                 root

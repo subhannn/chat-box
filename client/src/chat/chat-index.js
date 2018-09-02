@@ -2,7 +2,6 @@ import { h, render } from 'preact';
 import Chat from './chat';
 import InputInfo from './input-info';
 import * as store from 'store'
-var jwt = require('jwt-simple');
 
 let conf = {};
 const token = getUrlParameter('token');

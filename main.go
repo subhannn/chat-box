@@ -34,7 +34,7 @@ func main() {
 		helper.Log(logrus.PanicLevel, err2.Error(), "MakeHandler", "failed to created Telegram connection")
 	}
 
-	http.Any("/chat.html", func(c echo.Context) error {
+	http.POST("/iframe", func(c echo.Context) error {
 		return c.File("client/chat.html")
 	})
 	http.Static("/", "client")

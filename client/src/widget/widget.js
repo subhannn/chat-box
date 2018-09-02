@@ -1,5 +1,4 @@
 import { h, Component } from 'preact';
-import ChatFrame from './chat-frame';
 import ChatFloatingButton from './chat-floating-button';
 import ChatTitleMsg from './chat-title-msg';
 import ArrowIcon from './arrow-icon';

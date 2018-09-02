@@ -7,6 +7,9 @@ module.exports = {
         widget: [
             path.join(__dirname, 'src', 'widget', 'widget-index.js')
         ],
+        api: [
+            path.join(__dirname, 'src', 'api', 'index.js')
+        ],
         // chat: [
         //     path.join(__dirname, 'src', 'chat', 'chat-index.js')
         // ],

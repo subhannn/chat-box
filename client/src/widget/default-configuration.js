@@ -15,5 +15,6 @@ export const defaultConfiguration = {
     alwaysUseFloatingButton: false,
     desktopHeight: 450,
     desktopWidth: 370,
-    serverUrl: null
+    serverUrl: null,
+    isMobile: false,
 };
