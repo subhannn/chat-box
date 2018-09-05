@@ -2,6 +2,10 @@ import dateFormat from 'dateformat'
 import { h, Component } from 'preact';
 import MsgLoading from './msg-loading';
 import styles from './style.css'
+var linkify = require('linkifyjs');
+var linkifyHtml = require('linkifyjs/html');
+import { PreactHTMLConverter } from 'preact-html-converter';
+const converter = PreactHTMLConverter();
 
 const dayInMillis = 60 * 60 * 24 * 1000;
 
@@ -46,7 +50,7 @@ export default class MessageArea extends Component {
                                         <img src={defaultUrlAdmin} />
                                     }
                                 </figure>
-                                { text }
+                                { converter.convert(linkifyHtml(this.nl2br(text))) }
                                 { (props.conf.displayMessageTime) ?
                                     <div className={styles.time}>
                                         {
@@ -63,7 +67,7 @@ export default class MessageArea extends Component {
                     );
                     }else{
                         return (
-                            <li class={type+"-msg"}>
+                            <li className={styles[type+"-msg"]}>
                                 <span>{text}</span>
                             </li>
                         )
@@ -73,4 +77,8 @@ export default class MessageArea extends Component {
         );
     }
 
+    nl2br(str, isXhtml) {
+        var breakTag = isXhtml ? '<br />' : '<br>';
+        return String(str).replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+    }
 }

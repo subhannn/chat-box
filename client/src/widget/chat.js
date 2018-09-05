@@ -6,6 +6,7 @@ import * as $ from 'jquery'
 import styles from './style.css'
 import io from './socket.io'
 import 'storage-based-queue/dist/queue'
+import Cookie from './cookie'
 var md5 = require('md5')
 
 class MessageWorker{
@@ -150,8 +151,8 @@ export default class Chat extends Component {
     render(props,state) {
         this.props = props
 
-        let info = store.get('userInfo')
-        if(typeof this.props.name == 'undefined'){
+        let info = this.userActive()
+        if(typeof this.props.name == 'undefined' && typeof info.name != 'undefined'){
             this.props.name = info.name
             this.props.email = info.email
         }
@@ -387,10 +388,11 @@ export default class Chat extends Component {
     }
 
     userActive = () => {
-        if (store.enabled) {
-            return store.get('userInfo')?true:false;
-        } else {
-            return false;
+        var user = Cookie.getCookie("user")
+        if(user){
+            return user
+        }else{
+            return false
         }
     }
 }

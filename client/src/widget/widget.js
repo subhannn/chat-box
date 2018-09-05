@@ -4,7 +4,7 @@ import ChatTitleMsg from './chat-title-msg';
 import ArrowIcon from './arrow-icon';
 import * as store from 'store'
 import InputInfo from './input-info';
-import * as $ from 'jquery'
+import Cookie from './cookie'
 
 import {
     desktopTitleStyle, 
@@ -23,7 +23,7 @@ export default class Widget extends Component {
         this.state.isChatOpen = false;
         this.state.pristine = true;
         this.state.wasChatOpened = this.wasChatOpened();
-        if (this.checkWasOpened()) {
+        if (this.state.wasChatOpened) {
             this.state.isChatOpen = true
             this.state.pristine = false
         }
@@ -136,34 +136,17 @@ export default class Widget extends Component {
     }
 
     setCookie = () => {
-        let date = new Date();
-        let expirationTime = parseInt(this.props.conf.cookieExpiration);
-        date.setTime(date.getTime()+(expirationTime*24*60*60*1000));
-        let expires = "; expires="+date.toGMTString();
-        document.cookie = "chatwasopened=1"+expires+"; path=/";
+        Cookie.saveToCookie({
+            chatOpened: !this.state.wasChatOpened
+        })
     }
 
     getCookie = () => {
-        var nameEQ = "chatwasopened=";
-        var ca = document.cookie.split(';');
-        for(var i=0;i < ca.length;i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1,c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-        }
-        return false;
+        return Cookie.getCookie("chatOpened");
     }
 
     wasChatOpened = () => {
-        return (this.getCookie() === false) ? false : true;
-    }
-
-    checkWasOpened () {
-        if (store.enabled) {
-            return store.get('userInfo')?true:false;
-        } else {
-            return false;
-        }
+        return (this.getCookie() == false) ? false : true;
     }
 
     getUserId = () => {

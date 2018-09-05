@@ -4,12 +4,14 @@ import linkState from 'linkstate';
 import Chat from './chat';
 import styles from './style.css'
 import ReCaptcha from 'preact-grecaptcha';
+import Cookie from './cookie'
 
 export default class InputInfo extends Component {
     constructor(props) {
         super(props);
 
-        if(this.checkWasOpened()){
+        var user = Cookie.getCookie("user")
+        if(user){
             this.state.readyConnect = true
         }
     }
@@ -98,15 +100,18 @@ export default class InputInfo extends Component {
         this.props.phone = this.state.phone
         this.props.newRegister = true
 
-        store.set('userInfo', {
-            name: this.state.name,
-            email: this.state.email
-        })
-
         store.set('users', {
             name: this.state.name,
             email: this.state.email,
             phone: this.state.phone
+        })
+
+        Cookie.saveToCookie({
+            user: {
+                name: this.state.name,
+                email: this.state.email,
+                phone: this.state.phone
+            }
         })
 
         this.setState({
@@ -116,13 +121,5 @@ export default class InputInfo extends Component {
             message: this.state.message,
             readyConnect: true
         })
-    }
-
-    checkWasOpened () {
-        if (store.enabled) {
-            return store.get('userInfo')?true:false;
-        } else {
-            return false;
-        }
     }
 }
