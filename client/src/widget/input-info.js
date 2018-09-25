@@ -12,7 +12,7 @@ export default class InputInfo extends Component {
 
         var user = Cookie.getCookie("user")
         if(user){
-            this.state.readyConnect = true
+            this.state.readyConnect = user.activeSession
         }
     }
 
@@ -25,6 +25,20 @@ export default class InputInfo extends Component {
                     <form onSubmit={this.onSetInfo}>
                         <div className={styles.cont}>
                             <div className={styles.sr_info}>
+                            {
+                                (this.logUser())?
+                                <div>
+                                    <div className={styles.field_cont}>
+                                        <label>Your name: <span>*</span></label>
+                                        <input type="text" name="name" required onChange={linkState(this, 'name')} />
+                                    </div>
+                                    <div className={styles.field_cont}>
+                                        <label>E-mail: <span>*</span></label>
+                                        <input type="email" name="email" required onChange={linkState(this, 'email')} />
+                                    </div>
+                                </div>
+                                :
+                                <div>
                                 <div className={styles.field_cont}>
                                     <label>Your name: <span>*</span></label>
                                     <input type="text" name="name" required onChange={linkState(this, 'name')} />
@@ -33,6 +47,8 @@ export default class InputInfo extends Component {
                                     <label>E-mail: <span>*</span></label>
                                     <input type="email" name="email" required onChange={linkState(this, 'email')} />
                                 </div>
+                                </div>
+                            }
                                 <div className={styles.field_cont}>
                                     <label>Phone No. <span className={styles.muted}>(optional)</span></label>
                                     <input type="number" min="6" name="phone" onChange={linkState(this, 'phone')} />
@@ -100,14 +116,9 @@ export default class InputInfo extends Component {
         this.props.phone = this.state.phone
         this.props.newRegister = true
 
-        store.set('users', {
-            name: this.state.name,
-            email: this.state.email,
-            phone: this.state.phone
-        })
-
         Cookie.saveToCookie({
             user: {
+                activeSession: true,
                 name: this.state.name,
                 email: this.state.email,
                 phone: this.state.phone
@@ -121,5 +132,17 @@ export default class InputInfo extends Component {
             message: this.state.message,
             readyConnect: true
         })
+    }
+
+    logUser = () => {
+        if (store.enabled) {
+            var user = store.get('users')
+            if (user) {
+                console.log(user)
+                return user
+            }
+        }
+
+        return false
     }
 }

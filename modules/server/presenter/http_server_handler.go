@@ -1,6 +1,7 @@
 package presenter
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"strconv"
@@ -45,7 +46,18 @@ func NewHTTPServerHandler(db *gorm.DB, bot *tb.Bot) *HttpServerHandler {
 
 func (s *HttpServerHandler) Mount(ec *echo.Echo) {
 	ec.Any("/ws/", func(c echo.Context) error {
-		s.socketServer.ServeHTTP(c.Response(), c.Request())
+		origin := c.Request().Header.Get("Origin")
+		c.Response().Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Response().Header().Set("Access-Control-Allow-Origin", origin)
+		token := c.QueryParam("token")
+		account, err := s.serverQuery.GetAccount(token)
+		ctx := context.WithValue(c.Request().Context(), "account", account)
+		newReq := c.Request().WithContext(ctx)
+		s.socketServer.SetAllowRequest(func(h *http.Request) error {
+			return err
+		})
+
+		s.socketServer.ServeHTTP(c.Response(), newReq)
 		return nil
 	})
 	ec.GET("/api/messages", s.getMessages)

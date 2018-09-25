@@ -37,6 +37,25 @@ var jwt = require('jwt-simple');
                     return null
                 }
             },
+            removeCookie: function(key){
+                let COOKIE_KEY = 'chatbox_auth'
+                var token = Cookies.get(COOKIE_KEY)
+                if (token) {
+                    var options = jwt.decode(token, "chatboxxx")
+                    if (typeof options[key] != 'undefined') {
+                        delete options[key]
+                        var jwtStr = jwt.encode(options, "chatboxxx")
+                        Cookies.set(COOKIE_KEY, jwtStr, {
+                            expires: 1,
+                            domain: document.location.hostname,
+                        })
+                        return true
+                    }
+                    return false
+                }else{
+                    return false
+                }
+            },
             saveToCookie: function(data) {
                 let COOKIE_KEY = 'chatbox_auth'
         
@@ -49,9 +68,9 @@ var jwt = require('jwt-simple');
                     Object.assign(options, data);
                 }
                 var jwtStr = jwt.encode(options, "chatboxxx")
-                console.log("save cookie")
                 Cookies.set(COOKIE_KEY, jwtStr, {
-                    expires: 1
+                    expires: 1,
+                    domain: document.location.hostname,
                 })
             }
         }

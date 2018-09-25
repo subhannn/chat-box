@@ -46,7 +46,7 @@ func InitDb() (*gorm.DB, error) {
 	fmt.Println("Connected to DB")
 	db.LogMode(true)
 
-	err = db.AutoMigrate(&model.User{}, &model.AdminAlias{}, &model.Chat{}, &model.TestTable{}).Error
+	err = db.AutoMigrate(&model.User{}, &model.AdminAlias{}, &model.Chat{}, &model.Account{}).Error
 	if err != nil {
 		return nil, err
 	}

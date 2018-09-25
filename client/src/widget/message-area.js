@@ -67,7 +67,7 @@ export default class MessageArea extends Component {
                     );
                     }else{
                         return (
-                            <li className={styles[type+"-msg"]}>
+                            <li className={styles[type+"_msg"]}>
                                 <span>{text}</span>
                             </li>
                         )

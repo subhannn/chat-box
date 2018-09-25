@@ -40,12 +40,7 @@ export default class Chat extends Component {
         channelA.start()
         this.state.showGoBot = false
         this.state.unread = 0
-        if (store.enabled) {
-            this.messagesKey = 'messages' + '.' + props.chatId + '.' + props.host;
-            this.state.messages = store.get(this.messagesKey) || store.set(this.messagesKey, []);
-        } else {
-            this.state.messages = [];
-        }
+        this.state.messages = [];
     }
 
     componentDidMount() {
@@ -240,9 +235,7 @@ export default class Chat extends Component {
         this.writeMessage(msg.id, name, msg.text, msg.from, msg.type, false, msg.photo)
         if (msg.type == 'notification') {
             if (msg.command == "endsession") {
-                if (store.enabled) {
-                    store.clear()
-                }
+                this.logoutSession()
             }
         }else{
             if (msg.from === 'admin') {
@@ -394,5 +387,9 @@ export default class Chat extends Component {
         }else{
             return false
         }
+    }
+
+    logoutSession = () => {
+        Cookie.removeCookie("user")
     }
 }

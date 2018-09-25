@@ -1,25 +1,18 @@
 import { h, render } from 'preact';
-import {defaultConfiguration} from '../widget/default-configuration';
 import ChatFrame from './chat-frame';
 import {$, jQuery} from 'jquery'
+import Cookie from '../widget/cookie'
+import * as store from 'store'
 var jwt = require('jwt-simple')
+import Frame from 'react-frame-component';
 
 import {
-    desktopTitleStyle, 
-    desktopWrapperStyle,
     mobileOpenWrapperStyle, 
     mobileClosedWrapperStyle,
     iframeContainer,
-    chatOpened,
     desktopCloseContainer,
     desktopOpenContainer,
 } from "../widget/style";
-
-if (window.attachEvent) {
-    window.attachEvent('onload', init);
-} else {
-    window.addEventListener('load', init, false);
-}
 
 window.getRunningScript = function() {
     let err = new Error()
@@ -43,10 +36,16 @@ window.chatLog = function(){
 }
 
 function init(){
-    if(typeof window.chatAsyncInit == "function"){
-        window.Chat = new ChatObject()
-        window.chatAsyncInit()
-    }
+    window.Chat = new ChatObject()
+    window.Chat.init()
+}
+
+function getAccountKey() {
+    console.log(window.document)
+    var url = document.currentScript.getAttribute('src')
+    var regex = new RegExp('[\\?&]([^&#]*)');
+    var results = regex.exec(url);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '))
 }
 
 class ChatObject {
@@ -57,12 +56,13 @@ class ChatObject {
         return this
     }
 
-    init(options){
-        Object.assign(defaultConfiguration, options)
-        
+    init(){
         window.addEventListener('message', function(e){
             if (typeof e.data.message != 'undefined' && e.data.message == "chatopened") {
                 this.chatOpened(e.data.isChatOpen)
+            }
+            if (typeof e.data.message != 'undefined' && e.data.message == "setconfig") {
+                this.setConfig(e.data.config)
             }
         }.bind(this))
 
@@ -70,44 +70,44 @@ class ChatObject {
     }
 
     injectIframe() {
-        if (!defaultConfiguration.channelId) {
-            console.error('Please set channelId in Init Config');
-        } else {
-            this.root = document.createElement('div');
-            this.root.id = 'chatBoxRoot';
-            document.getElementsByTagName('body')[0].appendChild(this.root);
-            var currentPath = getRunningScript()
-            const server = defaultConfiguration.serverUrl || currentPath.protocol+'//'+currentPath.host;
-            defaultConfiguration.serverUrl = server
-            this.conf = { ...defaultConfiguration, ...window.intergramCustomizations };
-            this.conf.origin = document.location.protocol+'//'+document.location.host
-            
-            this.chatOpened(false)
-            var token = jwt.encode(this.conf, "apikmedia123")
-            // chatLog(token)
+        this.root = document.createElement('div');
+        this.root.id = 'chatBoxRoot';
+        document.getElementsByTagName('body')[0].appendChild(this.root);
+        var currentPath = getRunningScript()
+        console.log(currentPath)
+        var server = currentPath.protocol+'//'+currentPath.host;
+        this.conf = {
+            accountKey: getAccountKey(),
+            origin: document.location.protocol+'//'+document.location.host,
+            isMobile: this.isMobile()
+        };
+        
+        this.chatOpened(this.wasChatOpened())
+        var token = jwt.encode(this.conf, "apikmedia123")
 
-            render(
-                <ChatFrame styles={iframeContainer} iFrameSrc={server+'/iframe'} token={token} conf={this.conf} />,
-                this.root,
-            );
+        render(
+            <ChatFrame styles={iframeContainer} iFrameSrc={server+'/iframe'} token={token} conf={this.conf} />,
+            document.body,
+        );
+    }
+
+    isMobile = () => {
+        if (window.screen.width < 500){
+            return true
         }
+
+        return false
     }
 
     chatOpened = (isChatOpen) => {
-        const wrapperWidth = {width: this.conf.desktopWidth};
-        const desktopHeight = (window.innerHeight - 100 < this.conf.desktopHeight) ? window.innerHeight - 90 : this.conf.desktopHeight;
+        const desktopHeight = (window.innerHeight - 100 < 450) ? window.innerHeight - 90 : 450;
         const wrapperHeight = {height: desktopHeight+'px'};
         
-        var isMobile = false
-        if (window.screen.width < 500){
-            isMobile = true
-        }
-        
         let wrapperStyle;
-        if (!isChatOpen && (isMobile || this.conf.alwaysUseFloatingButton)) {
+        if (!isChatOpen && (this.isMobile())) {
             wrapperStyle = { ...mobileClosedWrapperStyle}; // closed mobile floating button
-        } else if (!isMobile){
-            wrapperStyle = (this.conf.closedStyle === 'chat' || isChatOpen || this.wasChatOpened()) ?
+        } else if (!this.isMobile()){
+            wrapperStyle = (isChatOpen || this.wasChatOpened()) ?
                 (isChatOpen) ? 
                     { ...desktopOpenContainer, ...wrapperHeight} // desktop mode, button style
                     :
@@ -121,18 +121,20 @@ class ChatObject {
         Object.assign(this.root.style, wrapperStyle);
     }
 
-    getCookie = () => {
-        var nameEQ = "chatwasopened=";
-        var ca = document.cookie.split(';');
-        for(var i=0;i < ca.length;i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1,c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    setConfig = (config) => {
+        Object.assign(this.conf, config);
+        if (store.enabled) {
+            store.set('_cbconf', this.conf)
         }
-        return false;
+    }
+
+    getCookie = () => {
+        return Cookie.getCookie("chatOpened");
     }
     
     wasChatOpened = () => {
-        return (this.getCookie() === false) ? false : true;
+        return (this.getCookie() == true) ? true : false;
     }
 }
+
+init()

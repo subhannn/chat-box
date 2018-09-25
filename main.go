@@ -5,18 +5,15 @@ import (
 	"os"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"github.com/sirupsen/logrus"
 	"telegram.chatbox/config"
 	"telegram.chatbox/helper"
 	"telegram.chatbox/modules/server/presenter"
+	// "github.com/dgrijalva/jwt-go"
 )
 
 func main() {
 	http := echo.New()
-
-	// http.Use(middleware.Logger())
-	http.Use(middleware.CORS())
 
 	port := os.Getenv("PORT")
 	// port
@@ -34,10 +31,11 @@ func main() {
 		helper.Log(logrus.PanicLevel, err2.Error(), "MakeHandler", "failed to created Telegram connection")
 	}
 
-	http.POST("/iframe", func(c echo.Context) error {
-		return c.File("client/chat.html")
+	http.GET("/", func(c echo.Context) error {
+		return c.Redirect(302, "http://localhost:8081/bundle.js")
 	})
-	http.Static("/", "client")
+
+	// http.Static("/", "client")
 
 	httpServerHandler := presenter.NewHTTPServerHandler(db, telegram)
 	httpServerHandler.Mount(http)

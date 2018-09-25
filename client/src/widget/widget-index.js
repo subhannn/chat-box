@@ -2,6 +2,7 @@ import { h, render } from 'preact';
 import Widget from './widget';
 import {defaultConfiguration} from './default-configuration';
 var jwt = require('jwt-simple')
+import io from './socket.io'
 
 if (window.attachEvent) {
     window.attachEvent('onload', init);
@@ -33,15 +34,13 @@ window.chatLog = function(){
 function init(){
     var token = getUrlParameter('token')
     if (token != "") {
-        // try {
+        try {
             let confString = jwt.decode(token, "apikmedia123", true)
-            // console.log(confString)
-            // chatLog(confString)
             var chat = new ChatObject()
             chat.init(confString)
-        // } catch (e) {
-        //     console.log('Failed to parse conf', e);
-        // }
+        } catch (e) {
+            console.log('Failed to parse conf', e);
+        }
     }
 }
 
@@ -58,32 +57,43 @@ class ChatObject {
     }
 
     init(options){
-        Object.assign(defaultConfiguration, options)
+        this.conf = {}
+        Object.assign(this.conf, options)
         
-        this.injectChat()
+        this.connectSocket()
+        // this.injectChat()
     }
 
     injectChat() {
-        if (!defaultConfiguration.channelId) {
-            console.error('Please set channelId in Init Config');
-        } else {
-            let root = document.createElement('div');
-            root.id = 'chatBoxRoot';
-            document.getElementsByTagName('body')[0].appendChild(root);
-            var currentPath = getRunningScript()
-            const server = defaultConfiguration.serverUrl || currentPath.protocol+'//'+currentPath.host;
-            defaultConfiguration.serverUrl = server
-            const host = window.location.host || 'unknown-host';
-            const conf = { ...defaultConfiguration, ...window.intergramCustomizations };
+        let root = document.createElement('div');
+        root.id = 'chatBoxRoot';
+        document.getElementsByTagName('body')[0].appendChild(root);
+        this.conf = defaultConfiguration;
 
-            render(
-                <Widget channelId={defaultConfiguration.channelId}
-                        host={host}
-                        isMobile={conf.isMobile}
-                        conf={conf}
-                />,
-                root
-            );
-        }
+        render(
+            <Widget isMobile={this.conf.isMobile}
+                    conf={this.conf}
+            />,
+            root
+        );
+    }
+
+    connectSocket () {
+        var scheme = document.location.protocol == "https:" ? "wss" : "ws";
+        var port = document.location.port ? (":" + document.location.port) : "";
+        var wsURL = scheme + "://" + document.location.hostname + port;
+
+        window.SocketIO = io(wsURL, {
+            path: '/ws'
+        });
+
+        window.SocketIO.on("connect", this.onConnect.bind(this))
+    }
+
+    onConnect () {
+        console.log(this.conf)
+        window.SocketIO.emit('connected', this.conf, function(data){
+            console.log(data)
+        })
     }
 }

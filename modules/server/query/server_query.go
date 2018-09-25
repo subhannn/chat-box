@@ -1,6 +1,7 @@
 package query
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -148,4 +149,19 @@ func (u *serverQueryImpl) GetMessages(roomId string, limit int64, offset float64
 	}
 
 	return response, nil
+}
+
+func (u *serverQueryImpl) GetAccount(accountKey string) (*model.Account, error) {
+	account := model.Account{}
+	if err := u.db.Table("accounts").Where(`"accountKey" = ?`, accountKey).Scan(&account).Error; err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return nil, err
+		}
+	}
+
+	if account == (model.Account{}) {
+		return nil, errors.New("Not found")
+	}
+
+	return &account, nil
 }

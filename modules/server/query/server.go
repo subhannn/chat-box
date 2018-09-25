@@ -1,6 +1,8 @@
 package query
 
-import "telegram.chatbox/modules/server/model"
+import (
+	"telegram.chatbox/modules/server/model"
+)
 
 type Server interface {
 	ClientCreateOrUpdate(user *model.User) error
@@ -11,4 +13,5 @@ type Server interface {
 
 	SaveChat(chat *model.Chat) error
 	GetMessages(roomId string, limit int64, offset float64) (interface{}, error)
+	GetAccount(string) (*model.Account, error)
 }

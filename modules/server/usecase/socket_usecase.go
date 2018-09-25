@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -78,10 +79,6 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 			}
 			err := c.query.SaveChat(chat)
 			if err == nil {
-				// conn := session.Connection()
-				// for _, val := range conn {
-				// 	val.Emit("chat-"+msg.UserId, msg)
-				// }
 				msg.ID = &chat.ID
 				msg.Photo = helper.GetGravatarUrl(user.Email)
 
@@ -93,11 +90,28 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 		return nil
 	})
 
+	so.On("connected", func(config model.Configuration) *model.Configuration {
+		account := so.Request().Context().Value("account").(*model.Account)
+		if account == nil {
+			return nil
+		}
+
+		err := json.Unmarshal([]byte(account.Config), &config)
+		if err != nil {
+			fmt.Println(err)
+			return &config
+		}
+		config.ChannelId = account.ChannelId
+
+		return &config
+	})
+
 	type ms struct {
-		ID    uint64 `json:"id"`
-		Nama  string `json:"name"`
-		Email string `json:"email"`
-		Photo string `json:"photo"`
+		ID       uint64      `json:"id"`
+		Nama     string      `json:"name"`
+		Email    string      `json:"email"`
+		Photo    string      `json:"photo"`
+		Messages interface{} `json:"messages"`
 	}
 	so.On("register", func(msg SocketMessage) *ms {
 		fmt.Println(msg)
@@ -116,15 +130,22 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 		c.socketSession.Set(msg.UserId, user, so)
 		c.serviceWait.Register(msg.UserId, msg.Email)
 
+		messages, _ := c.query.GetMessages(msg.UserId, 10, 0)
+
 		t := &ms{
-			ID:    user.ID,
-			Nama:  user.Name,
-			Email: user.Email,
-			Photo: helper.GetGravatarUrl(user.Email),
+			ID:       user.ID,
+			Nama:     user.Name,
+			Email:    user.Email,
+			Photo:    helper.GetGravatarUrl(user.Email),
+			Messages: messages,
 		}
 
 		return t
 	})
+
+	// so.On("leave", func(msg SocketMessage) *ms {
+
+	// })
 }
 
 func (c *socketUseCaseImpl) onDisconnected(so socketio.Socket) {

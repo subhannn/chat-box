@@ -11,3 +11,7 @@ client/package.json
 .env
 telegram
 vendor/*
+client/*
+widget/node_modules
+widget/node_modules/*
+dashboard/*

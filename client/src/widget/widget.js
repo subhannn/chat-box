@@ -30,14 +30,6 @@ export default class Widget extends Component {
     }
 
     render({conf, isMobile}, {isChatOpen, pristine}) {
-        parent.postMessage(
-            {
-                message: "chatopened",
-                isChatOpen: this.state.isChatOpen
-            },
-            conf.origin
-        )
-
         const wrapperWidth = {width: conf.desktopWidth};
         const desktopHeight = (window.innerHeight - 100 < conf.desktopHeight) ? window.innerHeight - 90 : conf.desktopHeight;
         const wrapperHeight = {height: desktopHeight};
@@ -127,11 +119,9 @@ export default class Widget extends Component {
         let stateData = {
             pristine: false,
             isChatOpen: !this.state.isChatOpen,
+            wasChatOpened: !this.state.wasChatOpened
         }
-        if(!this.state.isChatOpen && !this.wasChatOpened()){
-            this.setCookie();
-            stateData.wasChatOpened = true;
-        }
+        this.setCookie();
         this.setState(stateData);
     }
 
@@ -146,7 +136,7 @@ export default class Widget extends Component {
     }
 
     wasChatOpened = () => {
-        return (this.getCookie() == false) ? false : true;
+        return (this.getCookie() == true) ? true : false;
     }
 
     getUserId = () => {
