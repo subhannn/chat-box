@@ -483,6 +483,8 @@ a.banner {
   height: 45px;
   margin: 0;
   margin-right: 12px;
+  overflow: hidden;
+  border-radius: 50%;
 }
 
 .cont_info .figure > img{

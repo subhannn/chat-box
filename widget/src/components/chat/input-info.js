@@ -32,7 +32,7 @@ export default class InputInfo extends React.Component {
         var user = Cookie.getCookie("user")
         if(user){
             this.setState({
-                readyConnect: user.activeSession,
+                // readyConnect: user.activeSession,
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
@@ -46,6 +46,9 @@ export default class InputInfo extends React.Component {
         setTimeout(function(){
             window.SocketIO.connect()
         }, 300)
+        this.setState({
+            readyConnect: false
+        })
         this.initEdit()
         Cookie.saveToCookie({
             user: {
@@ -56,13 +59,11 @@ export default class InputInfo extends React.Component {
                 photo: this.state.photo,
             }
         })
-        this.setState({
-            readyConnect: false
-        })
         this.textarea.value = ""
     }
 
     render() {
+        var avatarDefault =  process.env.ASSETS_URL + 'assets/admin.png'
         return (
             <div>
                 <div style={{
@@ -86,7 +87,11 @@ export default class InputInfo extends React.Component {
                                 :
                                 <div className={styles.cont_info} onClick={() => { this.setState({editProfile: true}) }}>
                                     <figure className={styles.figure}>
-                                        <img src="http://localhost:8081/assets/admin.png" />
+                                        { (this.state.photo != "")? 
+                                            <img src={this.state.photo} />
+                                            :
+                                            <img src={avatarDefault} />
+                                        }
                                     </figure>
                                     <div className={styles.name_info}>
                                         {this.state.name}
