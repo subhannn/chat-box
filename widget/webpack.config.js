@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 
-module.exports = env = {
+module.exports = {
   entry: [
     './src/index'
   ],
@@ -28,11 +28,6 @@ module.exports = env = {
     //   ws: path.resolve ('./') + '/src/shim/ws.js'
     // },
     extensions: ['.js','.scss', '.jsx']
-  },
-  output: {
-    path: path.join(__dirname, '/dist'),
-    publicPath: '/',
-    filename: 'bundle.js'
   },
   devtool: 'cheap-eval-source-map',
   devServer: {

@@ -15,4 +15,5 @@ client/*
 widget/node_modules
 widget/node_modules/*
 widget/dist/index.html
+widget/static
 dashboard/*
