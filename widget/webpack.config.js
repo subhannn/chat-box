@@ -19,24 +19,17 @@ module.exports = {
           } },
           'css-loader?importLoader=1&modules&localIdentName=[path]___[name]__[local]___[hash:base64:5]'
         ],
-        test: /\.css$/
+        test: /\.css$/,
+        exclude: /node_modules/
       },
     ]
   },
   resolve: {
-    // alias: {
-    //   ws: path.resolve ('./') + '/src/shim/ws.js'
-    // },
     extensions: ['.js','.scss', '.jsx']
-  },
-  devtool: 'cheap-eval-source-map',
-  devServer: {
-    contentBase: './dist',
-    hot: true
   },
   plugins: [
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin()
   ]
 };

@@ -1,6 +1,5 @@
 import React from 'react';
 import styles from '../../assets/stylesheets/base.css'
-import Config from './config'
 import Helper from './helper'
 
 export default class PopUp extends React.Component {

@@ -3,7 +3,6 @@ import React from 'react';
 import linkState from 'linkstate';
 import Chat from './chat';
 import styles from '../../assets/stylesheets/base.css'
-import ReCaptcha from './recaptcha'
 import Cookie from './cookie'
 import Config from './config'
 import Helper from './helper'

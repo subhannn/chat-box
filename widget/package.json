@@ -8,6 +8,7 @@
     "dev": "webpack-dev-server --hot --inline",
     "webpack-dev-server": "webpack-dev-server --hot --inline",
     "dev:start": "npm run webpack-dev-server -- --config webpack.dev.config.js",
+    "prod:start": "npm run webpack-dev-server -- --config webpack.prod.config.js",
     "lint": "eslint src/**",
     "lint:watch": "esw -w src/**",
     "start": "npm run build && NODE_ENV=production node server.js",
@@ -52,11 +53,12 @@
     "storage-based-queue": "^1.2.6",
     "store": "^2.0.12",
     "style-loader": "^0.16.1",
-    "webpack": "^2.3.3"
+    "webpack": "^3.0.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "babel-eslint": "^7.2.2",
+    "clean-webpack-plugin": "^0.1.19",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
     "eslint-plugin-jsx-a11y": "^4.0.0",
@@ -68,6 +70,7 @@
     "react-test-renderer": "^15.5.4",
     "webpack-dev-middleware": "^1.10.1",
     "webpack-dev-server": "^2.4.2",
-    "webpack-hot-middleware": "^2.24.2"
+    "webpack-hot-middleware": "^2.24.2",
+    "webpack-merge": "^4.1.4"
   }
 }

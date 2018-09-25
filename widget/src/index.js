@@ -31,6 +31,7 @@ window.SocketIO = io(process.env.SOCKET_URL, {
         token: accountKey
     }
 })
+console.log(process.env.SOCKET_URL)
 
 window.SocketIO.on('connect', function(event){
     console.log('connect')

@@ -1,6 +1,5 @@
 import React from 'react';
 import Frame, { FrameContextConsumer } from 'react-frame-component';
-import store from 'store'
 import Cookie from './chat/cookie'
 const css = require('../assets/stylesheets/content.css').toString();
 import Widget from './chat/widget'
