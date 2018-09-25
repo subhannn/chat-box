@@ -8,7 +8,7 @@ config.plugins.push(
       'process.env.DEBUG': JSON.stringify('false'),
       'process.env.ASSETS_URL': JSON.stringify('http://widget.apik.co.id'),
       'process.env.SOCKET_URL': JSON.stringify('http://widget.apik.co.id'),
-  }),
+  })
 );
 
 config.plugins.push(
