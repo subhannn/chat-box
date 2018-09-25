@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -45,6 +46,15 @@ func NewHTTPServerHandler(db *gorm.DB, bot *tb.Bot) *HttpServerHandler {
 }
 
 func (s *HttpServerHandler) Mount(ec *echo.Echo) {
+	ec.GET("/", func(c echo.Context) error {
+		q := c.QueryParams()
+		if len(q) > 0 {
+			return c.Redirect(302, os.Getenv("WIDGET_URL")+"/bundle.js")
+		} else {
+			return c.String(404, `Not Found`)
+		}
+	})
+
 	ec.Any("/ws/", func(c echo.Context) error {
 		origin := c.Request().Header.Get("Origin")
 		c.Response().Header().Set("Access-Control-Allow-Credentials", "true")

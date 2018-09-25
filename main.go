@@ -31,12 +31,6 @@ func main() {
 		helper.Log(logrus.PanicLevel, err2.Error(), "MakeHandler", "failed to created Telegram connection")
 	}
 
-	http.GET("/", func(c echo.Context) error {
-		return c.Redirect(302, "http://localhost:8081/bundle.js")
-	})
-
-	// http.Static("/", "client")
-
 	httpServerHandler := presenter.NewHTTPServerHandler(db, telegram)
 	httpServerHandler.Mount(http)
 
