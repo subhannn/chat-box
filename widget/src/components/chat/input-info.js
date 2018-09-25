@@ -15,6 +15,7 @@ export default class InputInfo extends React.Component {
             name: "",
             email: "",
             phone: "",
+            photo: "",
             newRegister: false,
             editProfile: true
         }
@@ -35,6 +36,7 @@ export default class InputInfo extends React.Component {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
+                photo: user.photo,
                 editProfile: (user.activeSession)?true:false
             })
         }
@@ -44,15 +46,16 @@ export default class InputInfo extends React.Component {
         setTimeout(function(){
             window.SocketIO.connect()
         }, 300)
+        this.initEdit()
         Cookie.saveToCookie({
             user: {
                 activeSession: false,
                 name: this.state.name,
                 email: this.state.email,
-                phone: this.state.phone
+                phone: this.state.phone,
+                photo: this.state.photo,
             }
         })
-        this.initEdit()
         this.setState({
             readyConnect: false
         })
