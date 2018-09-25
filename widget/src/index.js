@@ -26,7 +26,7 @@ var connected = false
 
 window.SocketIO = io(process.env.SOCKET_URL, {
     transports: ['websocket'],
-    path: 'ws',
+    path: '/ws',
     query: {
         token: accountKey
     }
