@@ -186,7 +186,6 @@ func (s *telegramUseCaseImpl) OnCommandEndChat(m *tb.Message) {
 				From:    "admin",
 				Type:    "notification",
 			}
-
 			err = s.query.SaveChat(chat)
 			fmt.Println("err", err)
 			if err == nil {
