@@ -32,7 +32,7 @@ export default class InputInfo extends React.Component {
         var user = Cookie.getCookie("user")
         if(user){
             this.setState({
-                // readyConnect: user.activeSession,
+                readyConnect: user.activeSession,
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
@@ -46,10 +46,11 @@ export default class InputInfo extends React.Component {
         setTimeout(function(){
             window.SocketIO.connect()
         }, 300)
-        this.setState({
-            readyConnect: false
-        })
         this.initEdit()
+        this.setState({
+            readyConnect: false,
+            editProfile: false
+        })
         Cookie.saveToCookie({
             user: {
                 activeSession: false,
