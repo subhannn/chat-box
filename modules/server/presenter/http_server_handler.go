@@ -13,6 +13,7 @@ import (
 	"github.com/googollee/go-socket.io"
 	"github.com/labstack/echo"
 	tb "gopkg.in/tucnak/telebot.v2"
+	"telegram.chatbox/config"
 	"telegram.chatbox/modules/server/query"
 	"telegram.chatbox/modules/server/usecase"
 )
@@ -49,7 +50,7 @@ func (s *HttpServerHandler) Mount(ec *echo.Echo) {
 	ec.GET("/", func(c echo.Context) error {
 		q := c.QueryParams()
 		if len(q) > 0 {
-			return c.Redirect(302, os.Getenv("WIDGET_URL")+"/bundle.js")
+			return c.Redirect(302, os.Getenv("WIDGET_URL")+"/bundle.js?v="+config.Version)
 		} else {
 			return c.String(404, `Not Found`)
 		}

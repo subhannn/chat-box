@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/sirupsen/logrus"
@@ -12,9 +15,18 @@ import (
 	// "github.com/dgrijalva/jwt-go"
 )
 
+var (
+	Version string
+)
+
 func main() {
 	http := echo.New()
+	if Version == "" {
+		Version = strconv.FormatInt(time.Now().UnixNano(), 10)
+	}
 
+	config.Version = Version
+	fmt.Println("Start Chat-Box version ", Version)
 	port := os.Getenv("PORT")
 	// port
 	if port == "" {
