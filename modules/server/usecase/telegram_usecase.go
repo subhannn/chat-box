@@ -46,6 +46,8 @@ func (s *telegramUseCaseImpl) Send(from SocketMessage, chatId string, message st
 	newMsg := formatMessageFromClient(from, message)
 	if from.Type == "intro" {
 		newMsg = formatIntroMessageFromClient(from)
+	} else if from.Type == "notification" {
+		newMsg = from.Text
 	}
 	s.bot.Send(recipent, newMsg, tb.ModeHTML)
 	return nil
@@ -174,14 +176,29 @@ func (s *telegramUseCaseImpl) OnCommandEndChat(m *tb.Message) {
 				return
 			}
 
-			s.channel <- &TelegramMessage{
-				Text:    *admin.Alias + ` end this chat`,
-				UserId:  match[1],
-				Name:    *admin.Alias,
-				Time:    time.Now().String(),
+			textEnd := *admin.Alias + ` end this chat`
+
+			// save chat
+			chat := &model.Chat{
+				RoomId:  match[1],
+				AdminId: &admin.ID,
+				Text:    textEnd,
 				From:    "admin",
 				Type:    "notification",
-				Command: "endsession",
+			}
+
+			err = s.query.SaveChat(chat)
+			fmt.Println("err", err)
+			if err == nil {
+				s.channel <- &TelegramMessage{
+					Text:    textEnd,
+					UserId:  match[1],
+					Name:    *admin.Alias,
+					Time:    time.Now().String(),
+					From:    "admin",
+					Type:    "notification",
+					Command: "endsession",
+				}
 			}
 		}
 	} else {

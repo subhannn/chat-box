@@ -213,10 +213,21 @@ export default class Chat extends React.Component {
         this.setState({
             showOptionModal: 'close'
         })
-        
-        var event = new CustomEvent('end_chat', {});
-        this.win.dispatchEvent(event)
-        window.SocketIO.disconnect()
+        window.SocketIO.emit('chat', {
+            chatId: this.props.chatId, 
+            userId: this.props.userId,
+            name: this.userInfo.name,
+            email: this.userInfo.email,
+            text: 'User '+this.userInfo.name+' has left chat.',
+            from: 'visitor',
+            type: 'notification'
+        }, (data) => {
+            if (typeof data != 'undefined' && typeof data != 'null'){
+                var event = new CustomEvent('end_chat', {});
+                this.win.dispatchEvent(event)
+                window.SocketIO.disconnect()
+            }
+        })
     }
 
     handleChange = (e) => {
@@ -271,7 +282,7 @@ export default class Chat extends React.Component {
         this.writeMessage(msg.id, name, msg.text, msg.from, msg.type, false, msg.photo)
         if (msg.type == 'notification') {
             if (msg.command == "endsession") {
-                this.logoutSession()
+                this.logoutSession(true)
             }
         }else{
             if (msg.from === 'admin') {
@@ -325,6 +336,10 @@ export default class Chat extends React.Component {
     }
 
     sendChat = (data) => {
+        if (this.userInfo.activeSession == false) {
+            this.logoutSession(false)
+        }
+
         var $this = this
         var index = $this.writeMessage(0, data.name, data.text, data.from, data.type, 'loading', this.state.userPhoto)
         setTimeout(function(){
@@ -339,8 +354,6 @@ export default class Chat extends React.Component {
             handler: "MessageWorker",
             tag: "message-"+index,
             args: { callback: function(resolve, reject){
-                console.log(window.SocketIO.connected)
-
                 if (window.SocketIO.connected) {
                     window.SocketIO.emit("chat", data, (data) => {
                         if (typeof data != 'undefined' && typeof data != 'null'){
@@ -417,7 +430,18 @@ export default class Chat extends React.Component {
         }
     }
 
-    logoutSession = () => {
-        Cookie.removeCookie("user")
+    logoutSession = (status) => {
+        var newUser = {
+            activeSession: !status,
+            name: this.userInfo.name,
+            email: this.userInfo.email,
+            phone: this.userInfo.phone,
+            photo: this.state.userPhoto,
+        }
+
+        Cookie.saveToCookie({
+            user: newUser
+        })
+        this.userInfo = newUser
     }
 }

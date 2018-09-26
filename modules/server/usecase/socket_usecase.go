@@ -142,10 +142,6 @@ func (c *socketUseCaseImpl) onConnected(so socketio.Socket) {
 
 		return t
 	})
-
-	// so.On("leave", func(msg SocketMessage) *ms {
-
-	// })
 }
 
 func (c *socketUseCaseImpl) onDisconnected(so socketio.Socket) {
