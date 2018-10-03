@@ -24,13 +24,19 @@ st = st.join("\n")
 var accountKey = getAccountKey()
 var connected = false
 
-window.SocketIO = io(process.env.SOCKET_URL, {
+var options = {
     transports: ['websocket'],
     path: '/ws',
     query: {
         token: accountKey
     }
-})
+}
+
+if (process.env.NODE_ENV == 'production') {
+    options['secure'] = true
+}
+
+window.SocketIO = io(process.env.SOCKET_URL, options)
 
 window.SocketIO.on('connect', function(event){
     window.SocketIO.emit('connected', {}, function(data){
