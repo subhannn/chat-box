@@ -33,12 +33,12 @@ class Widget extends React.Component {
 
     componentDidMount() {
         var width = this.wrapperDiv.clientWidth
-        window.ChatRoot.style.width = width+'px'
+        window.ChatRoot.style.width = (width+1)+'px'
     }
 
     componentDidUpdate() {
         var width = this.wrapperDiv.clientWidth
-        window.ChatRoot.style.width = width+'px'
+        window.ChatRoot.style.width = (width+1)+'px'
     }
 
     render() {
