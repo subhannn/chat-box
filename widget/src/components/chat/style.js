@@ -120,7 +120,6 @@ export const desktopCloseContainer = {
     overflow: 'hidden',
     borderRadius: '5px 5px 0px 0px',
     height: '38px',
-    width: '184px',
 }
 
 export const desktopOpenContainer = {

@@ -31,6 +31,16 @@ class Widget extends React.Component {
         }
     }
 
+    componentDidMount() {
+        var width = this.wrapperDiv.clientWidth
+        window.ChatRoot.style.width = width+'px'
+    }
+
+    componentDidUpdate() {
+        var width = this.wrapperDiv.clientWidth
+        window.ChatRoot.style.width = width+'px'
+    }
+
     render() {
         const wrapperWidth = {width: Config.getConfig('settings.desktopWidth')};
         const desktopHeight = (window.innerHeight - 100 < Config.getConfig('settings.desktopHeight')) ? window.innerHeight - 90 : Config.getConfig('settings.desktopHeight');
@@ -52,7 +62,7 @@ class Widget extends React.Component {
         }
         
         return (
-            <div style={wrapperStyle}>
+            <div style={wrapperStyle} ref={ele => { this.wrapperDiv = ele }}>
 
                 {/* Open/close button */}
                 { (this.props.isMobile || Config.getConfig('ui.alwaysFloatingButton')) && !this.state.isChatOpen ?

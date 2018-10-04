@@ -15,9 +15,9 @@ export default class ArrowIcon extends React.Component {
 
     render() {
         return (
-            <div style={{padding: '0px 6px 0px 12px', display: 'flex', }} onClick={this.onCancel}>
-                {/* keyboard arrow up */}
-                { (this.props.isOpened) ?
+            <div>
+            { (this.props.isOpened) ?
+                <div style={{padding: '0px 6px 0px 12px', display: 'flex', }} onClick={this.onCancel}>
                     <svg style={{
                             marginRight: 15,
                             marginTop: 6,
@@ -34,7 +34,9 @@ export default class ArrowIcon extends React.Component {
                             stroke="white" 
                             strokeWidth="1"/>
                     </svg>
+                </div>
                     :
+                <div style={{padding: '0px 6px 0px 12px', display: 'flex'}}>
                     <svg style={{
                         width: '31px',
                         height: '26px',
@@ -49,7 +51,7 @@ export default class ArrowIcon extends React.Component {
                         c0,3.323,1.128,7.842,6.503,10.499c0.17,0.084,0.278,0.258,0.278,0.448v6.501l7.369-4.874c0.09-0.06,0.199-0.095,0.302-0.082
                         l0.186,0.01c0.286,0.016,0.571,0.031,0.861,0.031c8.836,0,15.5-5.388,15.5-12.533S25.336,1.294,16.5,1.294z"/>
                     </svg>
-                    
+                </div>    
                 }
             </div>
         );
